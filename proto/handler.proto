@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/AnnV0lokitina/diplom1/proto";
+
+message UserRequest {
+  string Login = 1;
+  string Password = 2;
+}
+
+message TextResponse {
+  string result = 3;
+}
+
+message File {
+  string name = 4;
+  bytes content = 5;
+}
+
+service SecureStorage {
+  rpc Register (UserRequest) returns (TextResponse);
+  rpc Login (UserRequest) returns (TextResponse);
+  rpc SendFile (UserRequest) returns (stream File) {};
+  rpc GetFile (stream File) returns (TextResponse) {};
+}
