@@ -2,31 +2,37 @@ package repo
 
 import (
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
-	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/repo/file"
+	"os"
+	"path/filepath"
 	"sync"
 )
 
+const dataFileName = "data.json"
+
 // Repo store in - memory storage and file - writer.
 type Repo struct {
-	mu     sync.Mutex
-	record *entity.Record
-	writer *file.Writer
+	mu        sync.Mutex
+	record    *entity.Record
+	writer    *entity.Writer
+	storePath string
 }
 
 // NewFileRepo create repository to store information in file.
-func NewFileRepo(filePath string) (*Repo, error) {
+func NewFileRepo(dir string) (*Repo, error) {
+	filePath := filepath.Join(dir, dataFileName)
 	records, err := createRecords(filePath)
 	if err != nil {
 		return nil, err
 	}
-	writer, err := file.NewWriter(filePath)
+	writer, err := entity.NewWriter(filePath)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Repo{
-		record: records,
-		writer: writer,
+		record:    records,
+		writer:    writer,
+		storePath: dir,
 	}, nil
 }
 
@@ -36,7 +42,11 @@ func (r *Repo) Close() error {
 }
 
 func createRecords(filePath string) (*entity.Record, error) {
-	reader, err := file.NewReader(filePath)
+	stat, err := os.Stat(filePath)
+	if os.IsNotExist(err) || stat.Size() == 0 {
+		return &entity.Record{}, nil
+	}
+	reader, err := entity.NewReader(filePath)
 	if err != nil {
 		return nil, err
 	}

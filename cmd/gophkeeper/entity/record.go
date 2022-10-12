@@ -23,7 +23,7 @@ type File struct {
 
 // Record with user Information.
 type Record struct {
-	CredentialsList []Credentials `json:"login_password_list"`
+	CredentialsList []Credentials `json:"credentials_list"`
 	TextFileList    []File        `json:"text_file_list"`
 	BinaryFileList  []File        `json:"binary_file_list"`
 	BankCardList    []BankCard    `json:"bank_card_list"`

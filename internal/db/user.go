@@ -1,4 +1,4 @@
-package repo
+package db
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func (r *Repo) CreateUser(
+func (r *DB) CreateUser(
 	ctx context.Context,
 	sessionID string,
 	login string,
@@ -53,7 +53,7 @@ func (r *Repo) CreateUser(
 	return nil
 }
 
-func (r *Repo) AuthUser(
+func (r *DB) AuthUser(
 	ctx context.Context,
 	login string,
 	passwordHash string,
@@ -73,7 +73,7 @@ func (r *Repo) AuthUser(
 	return userID, nil
 }
 
-func (r *Repo) AddUserSession(ctx context.Context, user *entity.User) error {
+func (r *DB) AddUserSession(ctx context.Context, user *entity.User) error {
 	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
 	sqlInsertSession := `INSERT INTO sessions (session_id, created_at, lifetime, user_id) 
@@ -87,7 +87,7 @@ func (r *Repo) AddUserSession(ctx context.Context, user *entity.User) error {
 	return nil
 }
 
-func (r *Repo) GetUserBySessionID(ctx context.Context, sessionID string) (*entity.User, error) {
+func (r *DB) GetUserBySessionID(ctx context.Context, sessionID string) (*entity.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
 	sqlSelectUser := `SELECT u.id, u.login 

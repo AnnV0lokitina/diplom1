@@ -5,10 +5,12 @@ import (
 	"errors"
 	"github.com/AnnV0lokitina/diplom1/internal/entity"
 	labelError "github.com/AnnV0lokitina/diplom1/pkg/error"
+	"github.com/AnnV0lokitina/diplom1/pkg/file"
 	log "github.com/sirupsen/logrus"
+	"io"
 )
 
-type Repo interface {
+type DB interface {
 	Close(ctx context.Context) error
 	CreateUser(
 		ctx context.Context,
@@ -26,12 +28,12 @@ type Repo interface {
 }
 
 type Service struct {
-	repo Repo
+	db DB
 }
 
-func NewService(repo Repo) *Service {
+func NewService(db DB) *Service {
 	return &Service{
-		repo: repo,
+		db: db,
 	}
 }
 
@@ -41,7 +43,7 @@ func (s *Service) RegisterUser(ctx context.Context, login string, password strin
 	if err != nil {
 		return nil, err
 	}
-	err = s.repo.CreateUser(ctx, sessionID, login, passwordHash)
+	err = s.db.CreateUser(ctx, sessionID, login, passwordHash)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +60,7 @@ func (s *Service) LoginUser(ctx context.Context, login string, password string) 
 	if err != nil {
 		return nil, err
 	}
-	userID, err := s.repo.AuthUser(ctx, login, passwordHash)
+	userID, err := s.db.AuthUser(ctx, login, passwordHash)
 	if err != nil {
 		var labelErr *labelError.LabelError
 		if errors.As(err, &labelErr) && labelErr.Label == labelError.TypeNotFound {
@@ -72,7 +74,7 @@ func (s *Service) LoginUser(ctx context.Context, login string, password string) 
 		Login:           login,
 		ActiveSessionID: sessionID,
 	}
-	err = s.repo.AddUserSession(ctx, user)
+	err = s.db.AddUserSession(ctx, user)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +82,7 @@ func (s *Service) LoginUser(ctx context.Context, login string, password string) 
 }
 
 func (s *Service) authorizeUser(ctx context.Context, sessionID string) (*entity.User, error) {
-	user, err := s.repo.GetUserBySessionID(ctx, sessionID)
+	user, err := s.db.GetUserBySessionID(ctx, sessionID)
 	if err != nil {
 		var labelErr *labelError.LabelError
 		if errors.As(err, &labelErr) && labelErr.Label == labelError.TypeNotFound {
@@ -90,4 +92,40 @@ func (s *Service) authorizeUser(ctx context.Context, sessionID string) (*entity.
 		return nil, err
 	}
 	return user, nil
+}
+
+func (s *Service) RestoreFile(session string, fileType string, fileName string, w io.Writer, time string) error {
+	f := file.File{
+		Path: "data.json",
+	}
+	return f.ReadByChunks(w)
+}
+
+func (s *Service) StoreFile(session string, fileType string, fileName string, r io.Reader, time string) error {
+	f := file.File{
+		Path: "data.json",
+	}
+	return f.WriteByChunks(r)
+	//w, err := entity.NewWriter("data.json")
+	//if err != nil {
+	//	return err
+	//}
+	//defer w.Close()
+	//b := make([]byte, 8)
+	//for {
+	//	log.Println("read start")
+	//	n, err := r.Read(b)
+	//	log.Printf("n = %v err = %v b = %v\n", n, err, string(b))
+	//	log.Printf("b[:n] = %q\n", b[:n])
+	//	if err == io.EOF || n == 0 {
+	//		log.Println("eof")
+	//		break
+	//	}
+	//	n, err = w.Write(b[:n])
+	//	log.Println(n)
+	//	if err != nil {
+	//		return err
+	//	}
+	//}
+	//return nil
 }

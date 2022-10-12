@@ -1,16 +1,12 @@
-package file
+package entity
 
 import (
-	"encoding/json"
 	"os"
-
-	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 )
 
 // Writer Store file pointer and decoder to write to file.
 type Writer struct {
-	file    *os.File
-	encoder *json.Encoder
+	file *os.File
 }
 
 // NewWriter Create new writer.
@@ -20,14 +16,13 @@ func NewWriter(filePath string) (*Writer, error) {
 		return nil, err
 	}
 	return &Writer{
-		file:    file,
-		encoder: json.NewEncoder(file),
+		file: file,
 	}, nil
 }
 
 // WriteRecord Write record to file.
-func (w *Writer) WriteRecord(record *entity.Record) error {
-	return w.encoder.Encode(record)
+func (w *Writer) Write(fileData []byte) (int, error) {
+	return w.file.Write(fileData)
 }
 
 // Close Stop work with file.

@@ -24,18 +24,6 @@ func main() {
 				Destination: &p.ServerAddress,
 			},
 			&cli.StringFlag{
-				Name:        "login",
-				Aliases:     []string{"l"},
-				Usage:       "Login",
-				Destination: &p.Login,
-			},
-			&cli.StringFlag{
-				Name:        "password",
-				Aliases:     []string{"p"},
-				Usage:       "Password",
-				Destination: &p.Password,
-			},
-			&cli.StringFlag{
 				Name:        "config",
 				Aliases:     []string{"c"},
 				Usage:       "File config",
@@ -43,15 +31,64 @@ func main() {
 				Destination: &handler.ConfigPath,
 			},
 		},
-		Action: func(*cli.Context) error {
-			h, err := handler.NewHandler(p)
-			if err != nil {
-				return err
-			}
-			err = h.Register()
-			return err
-		},
 		Commands: []*cli.Command{
+			{
+				Name:  "register",
+				Usage: "register new user",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:     "login",
+						Aliases:  []string{"l"},
+						Required: true,
+					},
+					&cli.StringFlag{
+						Name:     "password",
+						Aliases:  []string{"p"},
+						Required: true,
+					},
+				},
+				Action: func(cCtx *cli.Context) error {
+					h, err := handler.NewHandler(p)
+					if err != nil {
+						return err
+					}
+					fmt.Println("start register")
+					err = h.Register(
+						cCtx.Context,
+						cCtx.String("login"),
+						cCtx.String("password"),
+					)
+					return err
+				},
+			},
+			{
+				Name:  "login",
+				Usage: "user authorization",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:     "login",
+						Aliases:  []string{"l"},
+						Required: true,
+					},
+					&cli.StringFlag{
+						Name:     "password",
+						Aliases:  []string{"p"},
+						Required: true,
+					},
+				},
+				Action: func(cCtx *cli.Context) error {
+					h, err := handler.NewHandler(p)
+					if err != nil {
+						return err
+					}
+					err = h.Login(
+						cCtx.Context,
+						cCtx.String("login"),
+						cCtx.String("password"),
+					)
+					return err
+				},
+			},
 			{
 				Name:  "add",
 				Usage: "add info",
@@ -81,7 +118,9 @@ func main() {
 							if err != nil {
 								return err
 							}
+							fmt.Println("add", handler.ConfigPath)
 							err = h.AddCredentials(
+								cCtx.Context,
 								cCtx.String("login"),
 								cCtx.String("password"),
 								cCtx.String("meta"),
@@ -212,24 +251,38 @@ func main() {
 					{
 						Name:  "text",
 						Usage: "remove text data",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     "name",
+								Aliases:  []string{"n"},
+								Required: true,
+							},
+						},
 						Action: func(cCtx *cli.Context) error {
 							h, err := handler.NewHandler(p)
 							if err != nil {
 								return err
 							}
-							err = h.RemoveText()
+							err = h.RemoveTextByName(cCtx.String("name"))
 							return err
 						},
 					},
 					{
 						Name:  "binary",
 						Usage: "remove binary data",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     "name",
+								Aliases:  []string{"n"},
+								Required: true,
+							},
+						},
 						Action: func(cCtx *cli.Context) error {
 							h, err := handler.NewHandler(p)
 							if err != nil {
 								return err
 							}
-							err = h.RemoveBinaryData()
+							err = h.RemoveBinaryDataByName(cCtx.String("name"))
 							return err
 						},
 					},
@@ -268,8 +321,8 @@ func main() {
 							if err != nil {
 								return err
 							}
-							err = h.ShowCredentialsList()
-							return err
+							h.ShowCredentialsList()
+							return nil
 						},
 					},
 					{
@@ -280,8 +333,8 @@ func main() {
 							if err != nil {
 								return err
 							}
-							err = h.ShowTextFilesList()
-							return err
+							h.ShowTextFilesList()
+							return nil
 						},
 					},
 					{
@@ -292,8 +345,8 @@ func main() {
 							if err != nil {
 								return err
 							}
-							err = h.ShowBinaryDataList()
-							return err
+							h.ShowBinaryDataList()
+							return nil
 						},
 					},
 					{
@@ -304,8 +357,104 @@ func main() {
 							if err != nil {
 								return err
 							}
-							err = h.ShowBankCardList()
-							return err
+							h.ShowBankCardList()
+							return nil
+						},
+					},
+				},
+			},
+			{
+				Name:  "get",
+				Usage: "get item",
+				Subcommands: []*cli.Command{
+					{
+						Name:  "credentials",
+						Usage: "get login/password",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     "login",
+								Aliases:  []string{"l"},
+								Required: true,
+							},
+						},
+						Action: func(cCtx *cli.Context) error {
+							h, err := handler.NewHandler(p)
+							if err != nil {
+								return err
+							}
+							h.GetCredentialsByLogin(cCtx.String("login"))
+							return nil
+						},
+					},
+					{
+						Name:  "text",
+						Usage: "get text data",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     "name",
+								Aliases:  []string{"n"},
+								Required: true,
+							},
+							&cli.StringFlag{
+								Name:     "path",
+								Aliases:  []string{"p"},
+								Required: true,
+							},
+						},
+						Action: func(cCtx *cli.Context) error {
+							h, err := handler.NewHandler(p)
+							if err != nil {
+								return err
+							}
+							return h.GetTextFileByName(
+								cCtx.String("name"),
+								cCtx.String("path"),
+							)
+						},
+					},
+					{
+						Name:  "binary",
+						Usage: "get binary data",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     "name",
+								Aliases:  []string{"n"},
+								Required: true,
+							},
+							&cli.StringFlag{
+								Name:     "path",
+								Aliases:  []string{"p"},
+								Required: true,
+							},
+						},
+						Action: func(cCtx *cli.Context) error {
+							h, err := handler.NewHandler(p)
+							if err != nil {
+								return err
+							}
+							return h.GetBinaryDataByName(
+								cCtx.String("name"),
+								cCtx.String("path"),
+							)
+						},
+					},
+					{
+						Name:  "card",
+						Usage: "get bank card",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     "number",
+								Aliases:  []string{"n"},
+								Required: true,
+							},
+						},
+						Action: func(cCtx *cli.Context) error {
+							h, err := handler.NewHandler(p)
+							if err != nil {
+								return err
+							}
+							h.GetBankCardByNumber(cCtx.String("number"))
+							return nil
 						},
 					},
 				},

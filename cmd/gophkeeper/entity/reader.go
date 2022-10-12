@@ -1,10 +1,8 @@
-package file
+package entity
 
 import (
 	"encoding/json"
 	"os"
-
-	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 )
 
 // Reader Store file pointer and decoder to read file.
@@ -15,7 +13,7 @@ type Reader struct {
 
 // NewReader create Reader.
 func NewReader(filePath string) (*Reader, error) {
-	file, err := os.OpenFile(filePath, os.O_RDONLY|os.O_CREATE, 0777)
+	file, err := os.OpenFile(filePath, os.O_RDONLY, 0777)
 	if err != nil {
 		return nil, err
 	}
@@ -31,8 +29,8 @@ func (r *Reader) HasNext() bool {
 }
 
 // ReadRecord Read record from file.
-func (r *Reader) ReadRecord() (*entity.Record, error) {
-	var record entity.Record
+func (r *Reader) ReadRecord() (*Record, error) {
+	var record Record
 	if err := r.decoder.Decode(&record); err != nil {
 		return nil, err
 	}

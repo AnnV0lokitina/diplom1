@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	pb "github.com/AnnV0lokitina/diplom1/proto"
 	log "github.com/sirupsen/logrus"
 	"net"
@@ -21,7 +22,16 @@ func NewApp(grpcService *GRPCService) *App {
 func (app *App) Run(ctx context.Context, serverAddress string) error {
 	httpShutdownCh := make(chan struct{})
 
-	listen, err := net.Listen("tcp", ":3200")
+	go func() {
+		<-ctx.Done()
+		fmt.Println("done")
+
+		app.g.Server.GracefulStop()
+		log.Println("stop grpc")
+		httpShutdownCh <- struct{}{}
+	}()
+
+	listen, err := net.Listen("tcp", serverAddress)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -31,14 +41,6 @@ func (app *App) Run(ctx context.Context, serverAddress string) error {
 	if err := app.g.Server.Serve(listen); err != nil {
 		log.Fatal(err)
 	}
-
-	go func() {
-		<-ctx.Done()
-
-		app.g.Server.GracefulStop()
-		log.Println("stop grpc")
-		httpShutdownCh <- struct{}{}
-	}()
 
 	<-httpShutdownCh
 	if err == http.ErrServerClosed {

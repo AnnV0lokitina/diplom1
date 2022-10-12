@@ -5,11 +5,13 @@ import (
 	"github.com/AnnV0lokitina/diplom1/internal/entity"
 	"github.com/AnnV0lokitina/diplom1/pkg/userid"
 	pb "github.com/AnnV0lokitina/diplom1/proto"
+	"io"
 )
 
 type Service interface {
 	RegisterUser(ctx context.Context, login string, password string) (*entity.User, error)
 	LoginUser(ctx context.Context, login string, password string) (*entity.User, error)
+	StoreFile(session string, fileType string, fileName string, r io.Reader, time string) error
 }
 
 // Handler structure holds dependencies for server handlers.

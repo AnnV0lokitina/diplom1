@@ -1,17 +1,17 @@
 package handler
 
 func (h *Handler) RemoveCredentialsByLogin(login string) error {
-	return nil
+	return h.service.RemoveCredentialsByLogin(login)
 }
 
-func (h *Handler) RemoveText() error {
-	return nil
+func (h *Handler) RemoveTextByName(name string) error {
+	return h.service.RemoveTextByName(name)
 }
 
-func (h *Handler) RemoveBinaryData() error {
-	return nil
+func (h *Handler) RemoveBinaryDataByName(name string) error {
+	return h.service.RemoveBinaryDataByName(name)
 }
 
 func (h *Handler) RemoveBankCardByNumber(number string) error {
-	return nil
+	return h.service.RemoveBankCardByNumber(number)
 }

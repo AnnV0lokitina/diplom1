@@ -1,19 +1,43 @@
 package repo
 
-import "github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
+import (
+	"bufio"
+	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
+	"io"
+	"os"
+	"path/filepath"
+)
 
-// AddTextFileName Save text file information to storage.
-func (r *Repo) AddTextFileName(file entity.File) error {
+// AddTextFile Save text file information to storage.
+func (r *Repo) AddTextFile(file entity.File, reader *bufio.Reader) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+	outFilePath := filepath.Join(r.storePath, file.Name)
+	fo, err := os.Create(outFilePath)
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(fo, reader)
+	if err != nil {
+		return err
+	}
 	r.record.TextFileList = append(r.record.TextFileList, file)
 	return r.writer.WriteRecord(r.record)
 }
 
-// AddBinaryFileName Save binary file information to storage.
-func (r *Repo) AddBinaryFileName(file entity.File) error {
+// AddBinaryFile Save binary file information to storage.
+func (r *Repo) AddBinaryFile(file entity.File, reader *bufio.Reader) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+	outFilePath := filepath.Join(r.storePath, file.Name)
+	fo, err := os.Create(outFilePath)
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(fo, reader)
+	if err != nil {
+		return err
+	}
 	r.record.BinaryFileList = append(r.record.BinaryFileList, file)
 	return r.writer.WriteRecord(r.record)
 }

@@ -11,7 +11,6 @@ github.com/cpuguy83/go-md2man/v2/md2man
 github.com/davecgh/go-spew/spew
 # github.com/go-chi/chi/v5 v5.0.7
 ## explicit; go 1.14
-github.com/go-chi/chi/v5
 # github.com/golang/mock v1.6.0
 ## explicit; go 1.11
 # github.com/golang/protobuf v1.5.2
@@ -71,7 +70,6 @@ github.com/sirupsen/logrus
 # github.com/stretchr/testify v1.8.0
 ## explicit; go 1.13
 github.com/stretchr/testify/assert
-github.com/stretchr/testify/require
 # github.com/urfave/cli/v2 v2.11.1
 ## explicit; go 1.18
 github.com/urfave/cli/v2
@@ -89,8 +87,9 @@ golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
-# golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
+# golang.org/x/sync v0.0.0-20220929204114-8fcdb60fdcc0
 ## explicit
+golang.org/x/sync/errgroup
 # golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8
 ## explicit; go 1.17
 golang.org/x/sys/internal/unsafeheader

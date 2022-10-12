@@ -1,26 +1,48 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 package proto;
 
 option go_package = "github.com/AnnV0lokitina/diplom1/proto";
 
-message UserRequest {
-  string Login = 1;
-  string Password = 2;
+message UserRegRequest {
+  string login = 1;
+  string password = 2;
 }
 
-message TextResponse {
-  string result = 3;
+message UserRegResponse {
+  string session = 3;
 }
 
-message File {
-  string name = 4;
-  bytes content = 5;
+message FileInfo {
+  string name = 5;
+  string type = 6;
+  google.protobuf.Timestamp time = 14;
+}
+
+message StoreFileRequest {
+  FileInfo info = 7;
+  bytes content = 8;
+  string session = 4;
+}
+
+message StoreFileResponse {
+  uint32 size = 10;
+}
+
+message RestoreFileRequest {
+  string session = 11;
+}
+
+message RestoreFileResponse {
+  FileInfo info = 16;
+  bytes content = 15;
 }
 
 service SecureStorage {
-  rpc Register (UserRequest) returns (TextResponse);
-  rpc Login (UserRequest) returns (TextResponse);
-  rpc SendFile (UserRequest) returns (stream File) {};
-  rpc GetFile (stream File) returns (TextResponse) {};
+  rpc Register (UserRegRequest) returns (UserRegResponse);
+  rpc Login (UserRegRequest) returns (UserRegResponse);
+  rpc RestoreFile (RestoreFileRequest) returns (stream RestoreFileResponse) {};
+  rpc StoreFile (stream StoreFileRequest) returns (StoreFileResponse) {};
 }

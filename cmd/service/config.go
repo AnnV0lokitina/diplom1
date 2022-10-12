@@ -6,8 +6,8 @@ import (
 )
 
 type config struct {
-	RunAddress  string `env:"RUN_ADDRESS"  envDefault:"localhost:8080"`
-	DataBaseURI string `env:"DATABASE_URI" envDefault:""`
+	RunAddress  string `env:"RUN_ADDRESS"  envDefault:"localhost:3200"`
+	DataBaseURI string `env:"DATABASE_URI" envDefault:"postgres://postgres:qaz@localhost:5432/mydb"`
 }
 
 func initConfig() *config {

@@ -7,8 +7,6 @@ import (
 
 type Params struct {
 	ServerAddress string `json:"server_address,omitempty"`
-	Login         string `json:"login,omitempty"`
-	Password      string `json:"password,omitempty"`
 	FileStorePath string `json:"file_store_path,omitempty"`
 }
 

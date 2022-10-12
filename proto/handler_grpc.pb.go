@@ -22,10 +22,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SecureStorageClient interface {
-	Register(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*TextResponse, error)
-	Login(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*TextResponse, error)
-	SendFile(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (SecureStorage_SendFileClient, error)
-	GetFile(ctx context.Context, opts ...grpc.CallOption) (SecureStorage_GetFileClient, error)
+	Register(ctx context.Context, in *UserRegRequest, opts ...grpc.CallOption) (*UserRegResponse, error)
+	Login(ctx context.Context, in *UserRegRequest, opts ...grpc.CallOption) (*UserRegResponse, error)
+	RestoreFile(ctx context.Context, in *RestoreFileRequest, opts ...grpc.CallOption) (SecureStorage_RestoreFileClient, error)
+	StoreFile(ctx context.Context, opts ...grpc.CallOption) (SecureStorage_StoreFileClient, error)
 }
 
 type secureStorageClient struct {
@@ -36,8 +36,8 @@ func NewSecureStorageClient(cc grpc.ClientConnInterface) SecureStorageClient {
 	return &secureStorageClient{cc}
 }
 
-func (c *secureStorageClient) Register(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*TextResponse, error) {
-	out := new(TextResponse)
+func (c *secureStorageClient) Register(ctx context.Context, in *UserRegRequest, opts ...grpc.CallOption) (*UserRegResponse, error) {
+	out := new(UserRegResponse)
 	err := c.cc.Invoke(ctx, "/proto.SecureStorage/Register", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -45,8 +45,8 @@ func (c *secureStorageClient) Register(ctx context.Context, in *UserRequest, opt
 	return out, nil
 }
 
-func (c *secureStorageClient) Login(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*TextResponse, error) {
-	out := new(TextResponse)
+func (c *secureStorageClient) Login(ctx context.Context, in *UserRegRequest, opts ...grpc.CallOption) (*UserRegResponse, error) {
+	out := new(UserRegResponse)
 	err := c.cc.Invoke(ctx, "/proto.SecureStorage/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -54,12 +54,12 @@ func (c *secureStorageClient) Login(ctx context.Context, in *UserRequest, opts .
 	return out, nil
 }
 
-func (c *secureStorageClient) SendFile(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (SecureStorage_SendFileClient, error) {
-	stream, err := c.cc.NewStream(ctx, &SecureStorage_ServiceDesc.Streams[0], "/proto.SecureStorage/SendFile", opts...)
+func (c *secureStorageClient) RestoreFile(ctx context.Context, in *RestoreFileRequest, opts ...grpc.CallOption) (SecureStorage_RestoreFileClient, error) {
+	stream, err := c.cc.NewStream(ctx, &SecureStorage_ServiceDesc.Streams[0], "/proto.SecureStorage/RestoreFile", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &secureStorageSendFileClient{stream}
+	x := &secureStorageRestoreFileClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -69,51 +69,51 @@ func (c *secureStorageClient) SendFile(ctx context.Context, in *UserRequest, opt
 	return x, nil
 }
 
-type SecureStorage_SendFileClient interface {
-	Recv() (*File, error)
+type SecureStorage_RestoreFileClient interface {
+	Recv() (*RestoreFileResponse, error)
 	grpc.ClientStream
 }
 
-type secureStorageSendFileClient struct {
+type secureStorageRestoreFileClient struct {
 	grpc.ClientStream
 }
 
-func (x *secureStorageSendFileClient) Recv() (*File, error) {
-	m := new(File)
+func (x *secureStorageRestoreFileClient) Recv() (*RestoreFileResponse, error) {
+	m := new(RestoreFileResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-func (c *secureStorageClient) GetFile(ctx context.Context, opts ...grpc.CallOption) (SecureStorage_GetFileClient, error) {
-	stream, err := c.cc.NewStream(ctx, &SecureStorage_ServiceDesc.Streams[1], "/proto.SecureStorage/GetFile", opts...)
+func (c *secureStorageClient) StoreFile(ctx context.Context, opts ...grpc.CallOption) (SecureStorage_StoreFileClient, error) {
+	stream, err := c.cc.NewStream(ctx, &SecureStorage_ServiceDesc.Streams[1], "/proto.SecureStorage/StoreFile", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &secureStorageGetFileClient{stream}
+	x := &secureStorageStoreFileClient{stream}
 	return x, nil
 }
 
-type SecureStorage_GetFileClient interface {
-	Send(*File) error
-	CloseAndRecv() (*TextResponse, error)
+type SecureStorage_StoreFileClient interface {
+	Send(*StoreFileRequest) error
+	CloseAndRecv() (*StoreFileResponse, error)
 	grpc.ClientStream
 }
 
-type secureStorageGetFileClient struct {
+type secureStorageStoreFileClient struct {
 	grpc.ClientStream
 }
 
-func (x *secureStorageGetFileClient) Send(m *File) error {
+func (x *secureStorageStoreFileClient) Send(m *StoreFileRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *secureStorageGetFileClient) CloseAndRecv() (*TextResponse, error) {
+func (x *secureStorageStoreFileClient) CloseAndRecv() (*StoreFileResponse, error) {
 	if err := x.ClientStream.CloseSend(); err != nil {
 		return nil, err
 	}
-	m := new(TextResponse)
+	m := new(StoreFileResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -124,10 +124,10 @@ func (x *secureStorageGetFileClient) CloseAndRecv() (*TextResponse, error) {
 // All implementations must embed UnimplementedSecureStorageServer
 // for forward compatibility
 type SecureStorageServer interface {
-	Register(context.Context, *UserRequest) (*TextResponse, error)
-	Login(context.Context, *UserRequest) (*TextResponse, error)
-	SendFile(*UserRequest, SecureStorage_SendFileServer) error
-	GetFile(SecureStorage_GetFileServer) error
+	Register(context.Context, *UserRegRequest) (*UserRegResponse, error)
+	Login(context.Context, *UserRegRequest) (*UserRegResponse, error)
+	RestoreFile(*RestoreFileRequest, SecureStorage_RestoreFileServer) error
+	StoreFile(SecureStorage_StoreFileServer) error
 	mustEmbedUnimplementedSecureStorageServer()
 }
 
@@ -135,17 +135,17 @@ type SecureStorageServer interface {
 type UnimplementedSecureStorageServer struct {
 }
 
-func (UnimplementedSecureStorageServer) Register(context.Context, *UserRequest) (*TextResponse, error) {
+func (UnimplementedSecureStorageServer) Register(context.Context, *UserRegRequest) (*UserRegResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-func (UnimplementedSecureStorageServer) Login(context.Context, *UserRequest) (*TextResponse, error) {
+func (UnimplementedSecureStorageServer) Login(context.Context, *UserRegRequest) (*UserRegResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedSecureStorageServer) SendFile(*UserRequest, SecureStorage_SendFileServer) error {
-	return status.Errorf(codes.Unimplemented, "method SendFile not implemented")
+func (UnimplementedSecureStorageServer) RestoreFile(*RestoreFileRequest, SecureStorage_RestoreFileServer) error {
+	return status.Errorf(codes.Unimplemented, "method RestoreFile not implemented")
 }
-func (UnimplementedSecureStorageServer) GetFile(SecureStorage_GetFileServer) error {
-	return status.Errorf(codes.Unimplemented, "method GetFile not implemented")
+func (UnimplementedSecureStorageServer) StoreFile(SecureStorage_StoreFileServer) error {
+	return status.Errorf(codes.Unimplemented, "method StoreFile not implemented")
 }
 func (UnimplementedSecureStorageServer) mustEmbedUnimplementedSecureStorageServer() {}
 
@@ -161,7 +161,7 @@ func RegisterSecureStorageServer(s grpc.ServiceRegistrar, srv SecureStorageServe
 }
 
 func _SecureStorage_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserRequest)
+	in := new(UserRegRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -173,13 +173,13 @@ func _SecureStorage_Register_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/proto.SecureStorage/Register",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SecureStorageServer).Register(ctx, req.(*UserRequest))
+		return srv.(SecureStorageServer).Register(ctx, req.(*UserRegRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _SecureStorage_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserRequest)
+	in := new(UserRegRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -191,52 +191,52 @@ func _SecureStorage_Login_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/proto.SecureStorage/Login",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SecureStorageServer).Login(ctx, req.(*UserRequest))
+		return srv.(SecureStorageServer).Login(ctx, req.(*UserRegRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SecureStorage_SendFile_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(UserRequest)
+func _SecureStorage_RestoreFile_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(RestoreFileRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(SecureStorageServer).SendFile(m, &secureStorageSendFileServer{stream})
+	return srv.(SecureStorageServer).RestoreFile(m, &secureStorageRestoreFileServer{stream})
 }
 
-type SecureStorage_SendFileServer interface {
-	Send(*File) error
+type SecureStorage_RestoreFileServer interface {
+	Send(*RestoreFileResponse) error
 	grpc.ServerStream
 }
 
-type secureStorageSendFileServer struct {
+type secureStorageRestoreFileServer struct {
 	grpc.ServerStream
 }
 
-func (x *secureStorageSendFileServer) Send(m *File) error {
+func (x *secureStorageRestoreFileServer) Send(m *RestoreFileResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _SecureStorage_GetFile_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(SecureStorageServer).GetFile(&secureStorageGetFileServer{stream})
+func _SecureStorage_StoreFile_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(SecureStorageServer).StoreFile(&secureStorageStoreFileServer{stream})
 }
 
-type SecureStorage_GetFileServer interface {
-	SendAndClose(*TextResponse) error
-	Recv() (*File, error)
+type SecureStorage_StoreFileServer interface {
+	SendAndClose(*StoreFileResponse) error
+	Recv() (*StoreFileRequest, error)
 	grpc.ServerStream
 }
 
-type secureStorageGetFileServer struct {
+type secureStorageStoreFileServer struct {
 	grpc.ServerStream
 }
 
-func (x *secureStorageGetFileServer) SendAndClose(m *TextResponse) error {
+func (x *secureStorageStoreFileServer) SendAndClose(m *StoreFileResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *secureStorageGetFileServer) Recv() (*File, error) {
-	m := new(File)
+func (x *secureStorageStoreFileServer) Recv() (*StoreFileRequest, error) {
+	m := new(StoreFileRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -261,13 +261,13 @@ var SecureStorage_ServiceDesc = grpc.ServiceDesc{
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "SendFile",
-			Handler:       _SecureStorage_SendFile_Handler,
+			StreamName:    "RestoreFile",
+			Handler:       _SecureStorage_RestoreFile_Handler,
 			ServerStreams: true,
 		},
 		{
-			StreamName:    "GetFile",
-			Handler:       _SecureStorage_GetFile_Handler,
+			StreamName:    "StoreFile",
+			Handler:       _SecureStorage_StoreFile_Handler,
 			ClientStreams: true,
 		},
 	},

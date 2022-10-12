@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
+	dbPkg "github.com/AnnV0lokitina/diplom1/internal/db"
 	handlerGRPCPkg "github.com/AnnV0lokitina/diplom1/internal/handler"
-	repoPkg "github.com/AnnV0lokitina/diplom1/internal/repo"
 	servicePkg "github.com/AnnV0lokitina/diplom1/internal/service"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -23,18 +24,19 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	go func() {
 		c := make(chan os.Signal, 1)
-		signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+		signal.Notify(c, os.Interrupt, syscall.SIGTERM, syscall.SIGQUIT)
 
 		<-c
+		fmt.Println("cancel()")
 		cancel()
 	}()
-	repo, err := repoPkg.NewRepo(ctx, cfg.DataBaseURI)
+	db, err := dbPkg.NewDB(ctx, cfg.DataBaseURI)
 	if err != nil {
-		log.WithError(err).Fatal("error repo init")
+		log.WithError(err).Fatal("error db repo init")
 	}
-	defer repo.Close(ctx)
+	defer db.Close(ctx)
 
-	service := servicePkg.NewService(repo)
+	service := servicePkg.NewService(db)
 	handler := &GRPCService{
 		Handler: handlerGRPCPkg.NewHandler(service),
 		Server:  grpc.NewServer(),
