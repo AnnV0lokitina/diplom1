@@ -15,10 +15,11 @@ type Repo struct {
 	record    *entity.Record
 	writer    *entity.Writer
 	storePath string
+	zipPath   string
 }
 
 // NewFileRepo create repository to store information in file.
-func NewFileRepo(dir string) (*Repo, error) {
+func NewFileRepo(dir string, zipPath string) (*Repo, error) {
 	filePath := filepath.Join(dir, dataFileName)
 	records, err := createRecords(filePath)
 	if err != nil {
@@ -33,6 +34,7 @@ func NewFileRepo(dir string) (*Repo, error) {
 		record:    records,
 		writer:    writer,
 		storePath: dir,
+		zipPath:   zipPath,
 	}, nil
 }
 

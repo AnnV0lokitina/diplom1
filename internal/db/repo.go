@@ -6,10 +6,12 @@ import (
 	"time"
 )
 
+// DB keep information about database connection.
 type DB struct {
 	conn *pgx.Conn
 }
 
+// NewDB Creates a new database connection.
 func NewDB(ctx context.Context, dsn string) (*DB, error) {
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
@@ -22,6 +24,7 @@ func NewDB(ctx context.Context, dsn string) (*DB, error) {
 	}, nil
 }
 
+// Close the database connection.
 func (r *DB) Close(ctx context.Context) error {
 	return r.conn.Close(ctx)
 }

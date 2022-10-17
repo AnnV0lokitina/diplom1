@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// CreateUser Creates a new user.
 func (r *DB) CreateUser(
 	ctx context.Context,
 	sessionID string,
@@ -53,6 +54,7 @@ func (r *DB) CreateUser(
 	return nil
 }
 
+// AuthUser Authorizes the user with a username and password.
 func (r *DB) AuthUser(
 	ctx context.Context,
 	login string,
@@ -73,6 +75,7 @@ func (r *DB) AuthUser(
 	return userID, nil
 }
 
+// AddUserSession Saves a session for a user.
 func (r *DB) AddUserSession(ctx context.Context, user *entity.User) error {
 	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
@@ -87,6 +90,7 @@ func (r *DB) AddUserSession(ctx context.Context, user *entity.User) error {
 	return nil
 }
 
+// GetUserBySessionID Gets the user by session.
 func (r *DB) GetUserBySessionID(ctx context.Context, sessionID string) (*entity.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()

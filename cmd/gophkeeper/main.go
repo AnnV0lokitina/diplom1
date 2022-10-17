@@ -3,13 +3,21 @@ package main
 import (
 	"fmt"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/handler"
-	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"os"
 	"sort"
 )
 
 func main() {
+	// разобраться что с zip
+	// написать тесты и readme
+	// добавить шифрование tls
+	// проверить все эндпоинты
+	// отформатировать проект
+	// написать все комментарии
+	// на клиенте интерфейсы - написать тесты 80%
+	// https://github.com/Netflix/go-expect
+	// log.SetLevel(log.PanicLevel)
 	p := handler.Params{}
 	app := &cli.App{
 		Name:  "gophkeeper",
@@ -52,7 +60,7 @@ func main() {
 					if err != nil {
 						return err
 					}
-					fmt.Println("start register")
+
 					err = h.Register(
 						cCtx.Context,
 						cCtx.String("login"),
@@ -118,7 +126,7 @@ func main() {
 							if err != nil {
 								return err
 							}
-							fmt.Println("add", handler.ConfigPath)
+
 							err = h.AddCredentials(
 								cCtx.Context,
 								cCtx.String("login"),
@@ -148,7 +156,11 @@ func main() {
 							if err != nil {
 								return err
 							}
-							err = h.AddTextFromFile(cCtx.String("path"), cCtx.String("meta"))
+							err = h.AddTextFromFile(
+								cCtx.Context,
+								cCtx.String("path"),
+								cCtx.String("meta"),
+							)
 							return err
 						},
 					},
@@ -172,7 +184,10 @@ func main() {
 							if err != nil {
 								return err
 							}
-							err = h.AddBinaryDataFromFile(cCtx.String("path"), cCtx.String("meta"))
+							err = h.AddBinaryDataFromFile(
+								cCtx.Context,
+								cCtx.String("path"), cCtx.String("meta"),
+							)
 							return err
 						},
 					},
@@ -212,6 +227,7 @@ func main() {
 								return err
 							}
 							err = h.AddBankCard(
+								cCtx.Context,
 								cCtx.String("number"),
 								cCtx.String("exp"),
 								cCtx.String("cardholder"),
@@ -243,6 +259,7 @@ func main() {
 								return err
 							}
 							err = h.RemoveCredentialsByLogin(
+								cCtx.Context,
 								cCtx.String("login"),
 							)
 							return err
@@ -263,7 +280,7 @@ func main() {
 							if err != nil {
 								return err
 							}
-							err = h.RemoveTextByName(cCtx.String("name"))
+							err = h.RemoveTextByName(cCtx.Context, cCtx.String("name"))
 							return err
 						},
 					},
@@ -282,7 +299,7 @@ func main() {
 							if err != nil {
 								return err
 							}
-							err = h.RemoveBinaryDataByName(cCtx.String("name"))
+							err = h.RemoveBinaryDataByName(cCtx.Context, cCtx.String("name"))
 							return err
 						},
 					},
@@ -302,6 +319,7 @@ func main() {
 								return err
 							}
 							err = h.RemoveBankCardByNumber(
+								cCtx.Context,
 								cCtx.String("number"),
 							)
 							return err
@@ -321,7 +339,7 @@ func main() {
 							if err != nil {
 								return err
 							}
-							h.ShowCredentialsList()
+							h.ShowCredentialsList(cCtx.Context)
 							return nil
 						},
 					},
@@ -333,7 +351,7 @@ func main() {
 							if err != nil {
 								return err
 							}
-							h.ShowTextFilesList()
+							h.ShowTextFilesList(cCtx.Context)
 							return nil
 						},
 					},
@@ -345,7 +363,7 @@ func main() {
 							if err != nil {
 								return err
 							}
-							h.ShowBinaryDataList()
+							h.ShowBinaryDataList(cCtx.Context)
 							return nil
 						},
 					},
@@ -357,7 +375,7 @@ func main() {
 							if err != nil {
 								return err
 							}
-							h.ShowBankCardList()
+							h.ShowBankCardList(cCtx.Context)
 							return nil
 						},
 					},
@@ -382,7 +400,7 @@ func main() {
 							if err != nil {
 								return err
 							}
-							h.GetCredentialsByLogin(cCtx.String("login"))
+							h.GetCredentialsByLogin(cCtx.Context, cCtx.String("login"))
 							return nil
 						},
 					},
@@ -407,6 +425,7 @@ func main() {
 								return err
 							}
 							return h.GetTextFileByName(
+								cCtx.Context,
 								cCtx.String("name"),
 								cCtx.String("path"),
 							)
@@ -433,6 +452,7 @@ func main() {
 								return err
 							}
 							return h.GetBinaryDataByName(
+								cCtx.Context,
 								cCtx.String("name"),
 								cCtx.String("path"),
 							)
@@ -453,7 +473,7 @@ func main() {
 							if err != nil {
 								return err
 							}
-							h.GetBankCardByNumber(cCtx.String("number"))
+							h.GetBankCardByNumber(cCtx.Context, cCtx.String("number"))
 							return nil
 						},
 					},
@@ -466,7 +486,7 @@ func main() {
 	sort.Sort(cli.CommandsByName(app.Commands))
 
 	if err := app.Run(os.Args); err != nil {
-		log.Fatal(err)
+		fmt.Println(fmt.Sprintf("Error: %s", err))
+		os.Exit(1)
 	}
-	fmt.Println("end")
 }

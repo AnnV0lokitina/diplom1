@@ -1,19 +1,53 @@
 package handler
 
-import "context"
+import (
+	"context"
+	"fmt"
+)
 
+// AddCredentials Processes a request to add a login/password pair.
 func (h *Handler) AddCredentials(ctx context.Context, login string, password string, meta string) error {
-	return h.service.AddCredentials(ctx, login, password, meta)
+	err := h.service.AddCredentials(ctx, login, password, meta)
+	if err != nil {
+		return err
+	}
+	fmt.Println("Login password pair added successfully")
+	return nil
 }
 
-func (h *Handler) AddTextFromFile(path string, meta string) error {
-	return h.service.AddTextFromFile(path, meta)
+// AddTextFromFile Handles a request to add text from a file.
+func (h *Handler) AddTextFromFile(ctx context.Context, path string, meta string) error {
+	err := h.service.AddTextFromFile(ctx, path, meta)
+	if err != nil {
+		return err
+	}
+	fmt.Println("Text from file added successfully")
+	return nil
 }
 
-func (h *Handler) AddBinaryDataFromFile(path string, meta string) error {
-	return h.service.AddBinaryDataFromFile(path, meta)
+// AddBinaryDataFromFile Handles a request to add a binary file.
+func (h *Handler) AddBinaryDataFromFile(ctx context.Context, path string, meta string) error {
+	err := h.service.AddBinaryDataFromFile(ctx, path, meta)
+	if err != nil {
+		return err
+	}
+	fmt.Println("Binary added successfully")
+	return nil
 }
 
-func (h *Handler) AddBankCard(number string, exp string, cardholder string, code string, meta string) error {
-	return h.AddBankCard(number, exp, cardholder, code, meta)
+// AddBankCard Processes a request to add a bank card.
+func (h *Handler) AddBankCard(
+	ctx context.Context,
+	number string,
+	exp string,
+	cardholder string,
+	code string,
+	meta string,
+) error {
+	err := h.AddBankCard(ctx, number, exp, cardholder, code, meta)
+	if err != nil {
+		return err
+	}
+	fmt.Println("Bank card added successfully")
+	return nil
 }

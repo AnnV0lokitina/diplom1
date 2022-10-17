@@ -1,17 +1,70 @@
 package service
 
-func (s *Service) RemoveCredentialsByLogin(login string) error {
-	return s.repo.RemoveCredentialsByLogin(login)
+import (
+	"context"
+	log "github.com/sirupsen/logrus"
+)
+
+func (s *Service) RemoveCredentialsByLogin(ctx context.Context, login string) error {
+	session, err := GetSession()
+	if err != nil {
+		session = ""
+	}
+	err = s.receiveInfo(ctx, session)
+	if err != nil {
+		log.Info("receive info: " + err.Error())
+	}
+	err = s.repo.RemoveCredentialsByLogin(login)
+	if err != nil {
+		return err
+	}
+	return s.sendInfo(ctx, session)
 }
 
-func (s *Service) RemoveTextByName(name string) error {
-	return s.repo.RemoveTextFileByName(name)
+func (s *Service) RemoveTextByName(ctx context.Context, name string) error {
+	session, err := GetSession()
+	if err != nil {
+		session = ""
+	}
+	err = s.receiveInfo(ctx, session)
+	if err != nil {
+		log.Info("receive info: " + err.Error())
+	}
+	err = s.repo.RemoveTextFileByName(name)
+	if err != nil {
+		return err
+	}
+	return s.sendInfo(ctx, session)
 }
 
-func (s *Service) RemoveBinaryDataByName(name string) error {
-	return s.repo.RemoveBinaryFileByName(name)
+func (s *Service) RemoveBinaryDataByName(ctx context.Context, name string) error {
+	session, err := GetSession()
+	if err != nil {
+		session = ""
+	}
+	err = s.receiveInfo(ctx, session)
+	if err != nil {
+		log.Info("receive info: " + err.Error())
+	}
+	err = s.repo.RemoveBinaryFileByName(name)
+	if err != nil {
+		return err
+	}
+	return s.sendInfo(ctx, session)
 }
 
-func (s *Service) RemoveBankCardByNumber(number string) error {
-	return s.repo.RemoveBankCardByNumber(number)
+func (s *Service) RemoveBankCardByNumber(ctx context.Context, number string) error {
+	session, err := GetSession()
+	if err != nil {
+		session = ""
+	}
+	err = s.receiveInfo(ctx, session)
+	if err != nil {
+		log.Info("receive info: " + err.Error())
+	}
+	err = s.repo.RemoveBankCardByNumber(number)
+	if err != nil {
+		return err
+	}
+	return s.sendInfo(ctx, session)
 }

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"fmt"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 )
@@ -33,51 +34,51 @@ func (h *Handler) printFile(f entity.File) {
 	)
 }
 
-func (h *Handler) ShowCredentialsList() {
-	credentials := h.service.ShowCredentialsList()
+func (h *Handler) ShowCredentialsList(ctx context.Context) {
+	credentials := h.service.ShowCredentialsList(ctx)
 	for _, c := range credentials {
 		h.printCredentials(c)
 	}
 }
 
-func (h *Handler) ShowTextFilesList() {
-	files := h.service.ShowTextFilesList()
+func (h *Handler) ShowTextFilesList(ctx context.Context) {
+	files := h.service.ShowTextFilesList(ctx)
 	for _, f := range files {
 		h.printFile(f)
 	}
 }
 
-func (h *Handler) ShowBinaryDataList() {
-	files := h.service.ShowBinaryDataList()
+func (h *Handler) ShowBinaryDataList(ctx context.Context) {
+	files := h.service.ShowBinaryDataList(ctx)
 	for _, f := range files {
 		h.printFile(f)
 	}
 }
 
-func (h *Handler) ShowBankCardList() {
-	credentials := h.service.ShowBankCardList()
+func (h *Handler) ShowBankCardList(ctx context.Context) {
+	credentials := h.service.ShowBankCardList(ctx)
 	for _, c := range credentials {
 		h.printBankCard(c)
 	}
 }
 
-func (h *Handler) GetCredentialsByLogin(login string) {
-	c := h.service.GetCredentialsByLogin(login)
+func (h *Handler) GetCredentialsByLogin(ctx context.Context, login string) {
+	c := h.service.GetCredentialsByLogin(ctx, login)
 	h.printCredentials(*c)
 }
 
-func (h *Handler) GetBankCardByNumber(number string) {
-	c := h.service.GetBankCardByNumber(number)
+func (h *Handler) GetBankCardByNumber(ctx context.Context, number string) {
+	c := h.service.GetBankCardByNumber(ctx, number)
 	h.printBankCard(*c)
 }
 
-func (h *Handler) GetTextFileByName(name string, path string) error {
+func (h *Handler) GetTextFileByName(ctx context.Context, name string, path string) error {
 	//f := h.repo.GetTextFileByName(name)
 	//f.Name
 	return nil
 }
 
-func (h *Handler) GetBinaryDataByName(name string, path string) error {
+func (h *Handler) GetBinaryDataByName(ctx context.Context, name string, path string) error {
 	//f := h.repo.GetTextFileByName(name)
 	//f.Name
 	return nil

@@ -3,11 +3,12 @@ package file
 import (
 	"bufio"
 	"errors"
-	"fmt"
+	log "github.com/sirupsen/logrus"
 	"io"
 	"os"
 )
 
+// ReadByChunks Read file by chunks.
 func (f *File) ReadByChunks(w io.Writer) error {
 	file, err := os.Open(f.Path)
 	if err != nil {
@@ -16,13 +17,14 @@ func (f *File) ReadByChunks(w io.Writer) error {
 	defer file.Close()
 
 	reader := bufio.NewReader(file)
-	buf := make([]byte, chunkSize)
+	buf := make([]byte, ChunkSize)
 
 	for {
 		n, err := reader.Read(buf)
 		if err != nil {
 			if err != io.EOF {
 				if err != nil {
+					log.Error("read file chunk error")
 					return errors.New("read file chunk error")
 				}
 			}
@@ -31,9 +33,10 @@ func (f *File) ReadByChunks(w io.Writer) error {
 		if n == 0 {
 			return nil
 		}
-		fmt.Println("read: ", string(buf[0:n]))
+		//log.Info("read by chunks: ", string(buf[0:n]))
 		_, err = w.Write(buf[0:n])
 		if err != nil {
+			log.Error("send file chunk to writer error")
 			return errors.New("send file chunk error")
 		}
 	}

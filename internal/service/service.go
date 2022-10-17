@@ -5,11 +5,12 @@ import (
 	"errors"
 	"github.com/AnnV0lokitina/diplom1/internal/entity"
 	labelError "github.com/AnnV0lokitina/diplom1/pkg/error"
-	"github.com/AnnV0lokitina/diplom1/pkg/file"
 	log "github.com/sirupsen/logrus"
 	"io"
+	"time"
 )
 
+// DB database interface.
 type DB interface {
 	Close(ctx context.Context) error
 	CreateUser(
@@ -27,16 +28,28 @@ type DB interface {
 	GetUserBySessionID(ctx context.Context, activeSessionID string) (*entity.User, error)
 }
 
-type Service struct {
-	db DB
+// Repo file repository interface.
+type Repo interface {
+	GetInfo(fileName string) (*entity.FileInfo, error)
+	Read(fileName string, w io.Writer) error
+	Write(fileName string, reader io.Reader) error
 }
 
-func NewService(db DB) *Service {
+// Service keep information to execute application tasks.
+type Service struct {
+	db   DB
+	repo Repo
+}
+
+// NewService Create new Service struct.
+func NewService(db DB, repo Repo) *Service {
 	return &Service{
-		db: db,
+		db:   db,
+		repo: repo,
 	}
 }
 
+// RegisterUser Register new user.
 func (s *Service) RegisterUser(ctx context.Context, login string, password string) (*entity.User, error) {
 	passwordHash := entity.CreatePasswordHash(password)
 	sessionID, err := entity.GenerateSessionID()
@@ -54,6 +67,7 @@ func (s *Service) RegisterUser(ctx context.Context, login string, password strin
 	return user, nil
 }
 
+// LoginUser Authorize user by login and password.
 func (s *Service) LoginUser(ctx context.Context, login string, password string) (*entity.User, error) {
 	passwordHash := entity.CreatePasswordHash(password)
 	sessionID, err := entity.GenerateSessionID()
@@ -81,6 +95,7 @@ func (s *Service) LoginUser(ctx context.Context, login string, password string) 
 	return user, nil
 }
 
+// authorizeUser Authorize user by session.
 func (s *Service) authorizeUser(ctx context.Context, sessionID string) (*entity.User, error) {
 	user, err := s.db.GetUserBySessionID(ctx, sessionID)
 	if err != nil {
@@ -94,38 +109,49 @@ func (s *Service) authorizeUser(ctx context.Context, sessionID string) (*entity.
 	return user, nil
 }
 
-func (s *Service) RestoreFile(session string, fileType string, fileName string, w io.Writer, time string) error {
-	f := file.File{
-		Path: "data.json",
+// RestoreFile Send new information to user.
+func (s *Service) RestoreFile(
+	ctx context.Context,
+	sessionID string,
+	time time.Time,
+	w io.Writer,
+) error {
+	log.Info("start authorize user")
+	user, err := s.authorizeUser(ctx, sessionID)
+	if err != nil {
+		log.Errorf("error while authorization: %s", err)
+		return err
 	}
-	return f.ReadByChunks(w)
+	log.Info("start restore file")
+	info, err := s.repo.GetInfo(user.Login)
+	if err != nil {
+		log.Info("no file to restore: %s", err)
+		return err
+	}
+	if info.UpdateTime.Before(time) {
+		log.Info("stored file is old")
+		return labelError.NewLabelError(labelError.TypeUpgradeRequired, errors.New("stored file is old"))
+	}
+	return s.repo.Read(user.Login, w)
 }
 
-func (s *Service) StoreFile(session string, fileType string, fileName string, r io.Reader, time string) error {
-	f := file.File{
-		Path: "data.json",
+// StoreFile Save new information from user.
+func (s *Service) StoreFile(ctx context.Context, sessionID string, time time.Time, r io.Reader) error {
+	log.Info("start authorize user")
+	user, err := s.authorizeUser(ctx, sessionID)
+	if err != nil {
+		log.Errorf("error while authorization: %s", err)
+		return err
 	}
-	return f.WriteByChunks(r)
-	//w, err := entity.NewWriter("data.json")
-	//if err != nil {
-	//	return err
-	//}
-	//defer w.Close()
-	//b := make([]byte, 8)
-	//for {
-	//	log.Println("read start")
-	//	n, err := r.Read(b)
-	//	log.Printf("n = %v err = %v b = %v\n", n, err, string(b))
-	//	log.Printf("b[:n] = %q\n", b[:n])
-	//	if err == io.EOF || n == 0 {
-	//		log.Println("eof")
-	//		break
-	//	}
-	//	n, err = w.Write(b[:n])
-	//	log.Println(n)
-	//	if err != nil {
-	//		return err
-	//	}
-	//}
-	//return nil
+	log.Info("start save file")
+	info, err := s.repo.GetInfo(user.Login)
+	if err != nil {
+		log.Info("no old file in store")
+		return s.repo.Write(user.Login, r)
+	}
+	if info.UpdateTime.After(time) {
+		log.Error("received file is old")
+		return labelError.NewLabelError(labelError.TypeUpgradeRequired, errors.New("received file is old"))
+	}
+	return s.repo.Write(user.Login, r)
 }

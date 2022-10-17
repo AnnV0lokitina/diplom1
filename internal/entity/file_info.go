@@ -2,7 +2,7 @@ package entity
 
 import "time"
 
+// FileInfo keep information about user file
 type FileInfo struct {
-	Name       string
 	UpdateTime time.Time
 }

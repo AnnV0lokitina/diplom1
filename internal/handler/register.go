@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// Register a user with a username and password.
 func (h *Handler) Register(ctx context.Context, in *pb.UserRegRequest) (*pb.UserRegResponse, error) {
 	password := in.GetPassword()
 	login := in.GetLogin()

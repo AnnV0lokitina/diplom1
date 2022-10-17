@@ -5,60 +5,19 @@ import (
 	"context"
 	"errors"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
-	"golang.org/x/sync/errgroup"
-	"io"
+	log "github.com/sirupsen/logrus"
 	"os"
 )
 
-func (s *Service) sendInfo(ctx context.Context, session string) error {
-	r, w := io.Pipe()
-	fileInfo, err := s.repo.GetInfo()
-	if err != nil {
-		return err
-	}
-	g, _ := errgroup.WithContext(ctx)
-	g.Go(func() error {
-		defer w.Close()
-		return s.repo.ReadFileByChunks(w)
-	})
-	err = s.connection.StoreInfo(ctx, session, r, fileInfo)
-	if err != nil {
-		return err
-	}
-	if err := g.Wait(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *Service) receiveInfo(ctx context.Context, session string) error {
-	r, w := io.Pipe()
-	fileInfo, err := s.repo.GetInfo()
-	if err != nil {
-		// если пустой обновить независимо от даты
-		return err
-	}
-	g, _ := errgroup.WithContext(ctx)
-	g.Go(func() error {
-		defer r.Close()
-		return s.repo.WriteFileByChunks(r)
-	})
-	err = s.connection.RestoreInfo(ctx, session, w, fileInfo)
-	if err != nil {
-		return err
-	}
-	if err := g.Wait(); err != nil {
-		return err
-	}
-	return nil
-}
-
-// 1kb
+// AddCredentials Saves a pair of login and password.
 func (s *Service) AddCredentials(ctx context.Context, login string, password string, meta string) error {
-	session := os.Getenv("EXT_SESSION")
-	err := s.receiveInfo(ctx, session)
+	session, err := GetSession()
 	if err != nil {
-		return err
+		session = ""
+	}
+	err = s.receiveInfo(ctx, session)
+	if err != nil {
+		log.Info("receive info: " + err.Error())
 	}
 	cred := entity.Credentials{
 		Login:    login,
@@ -72,7 +31,16 @@ func (s *Service) AddCredentials(ctx context.Context, login string, password str
 	return s.sendInfo(ctx, session)
 }
 
-func (s *Service) AddTextFromFile(path string, meta string) error {
+// AddTextFromFile Saves a text from file to storage.
+func (s *Service) AddTextFromFile(ctx context.Context, path string, meta string) error {
+	session, err := GetSession()
+	if err != nil {
+		session = ""
+	}
+	err = s.receiveInfo(ctx, session)
+	if err != nil {
+		log.Info("receive info: " + err.Error())
+	}
 	stat, err := os.Stat(path)
 	if os.IsNotExist(err) || stat.Size() == 0 {
 		return errors.New("no source file")
@@ -89,10 +57,23 @@ func (s *Service) AddTextFromFile(path string, meta string) error {
 		Name: stat.Name(),
 		Meta: meta,
 	}
-	return s.repo.AddTextFile(info, reader)
+	err = s.repo.AddTextFile(info, reader)
+	if err != nil {
+		return err
+	}
+	return s.sendInfo(ctx, session)
 }
 
-func (s *Service) AddBinaryDataFromFile(path string, meta string) error {
+// AddBinaryDataFromFile Saves a binary file to storage.
+func (s *Service) AddBinaryDataFromFile(ctx context.Context, path string, meta string) error {
+	session, err := GetSession()
+	if err != nil {
+		session = ""
+	}
+	err = s.receiveInfo(ctx, session)
+	if err != nil {
+		log.Info("receive info: " + err.Error())
+	}
 	stat, err := os.Stat(path)
 	if os.IsNotExist(err) || stat.Size() == 0 {
 		return errors.New("no source file")
@@ -109,10 +90,30 @@ func (s *Service) AddBinaryDataFromFile(path string, meta string) error {
 		Name: stat.Name(),
 		Meta: meta,
 	}
-	return s.repo.AddBinaryFile(info, reader)
+	err = s.repo.AddBinaryFile(info, reader)
+	if err != nil {
+		return err
+	}
+	return s.sendInfo(ctx, session)
 }
 
-func (s *Service) AddBankCard(number string, exp string, cardholder string, code string, meta string) error {
+// AddBankCard Saves a bank card to storage.
+func (s *Service) AddBankCard(
+	ctx context.Context,
+	number string,
+	exp string,
+	cardholder string,
+	code string,
+	meta string,
+) error {
+	session, err := GetSession()
+	if err != nil {
+		session = ""
+	}
+	err = s.receiveInfo(ctx, session)
+	if err != nil {
+		log.Info("receive info: " + err.Error())
+	}
 	card := entity.BankCard{
 		Number:     number,
 		ExpDate:    exp,
@@ -120,5 +121,9 @@ func (s *Service) AddBankCard(number string, exp string, cardholder string, code
 		Code:       code,
 		Meta:       meta,
 	}
-	return s.repo.AddBankCard(card)
+	err = s.repo.AddBankCard(card)
+	if err != nil {
+		return err
+	}
+	return s.sendInfo(ctx, session)
 }

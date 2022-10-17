@@ -6,6 +6,7 @@ import "crypto/rand"
 
 const IDLength = 4
 
+// GenerateUserID Generate new user id.
 func GenerateUserID() (uint32, error) {
 	b := make([]byte, IDLength)
 	_, err := rand.Read(b)

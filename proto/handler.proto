@@ -16,8 +16,6 @@ message UserRegResponse {
 }
 
 message FileInfo {
-  string name = 5;
-  string type = 6;
   google.protobuf.Timestamp time = 14;
 }
 
@@ -32,11 +30,12 @@ message StoreFileResponse {
 }
 
 message RestoreFileRequest {
+  FileInfo info = 17;
   string session = 11;
 }
 
 message RestoreFileResponse {
-  FileInfo info = 16;
+  //FileInfo info = 16;
   bytes content = 15;
 }
 

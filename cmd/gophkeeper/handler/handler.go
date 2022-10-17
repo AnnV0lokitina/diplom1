@@ -5,15 +5,20 @@ import (
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/external"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/repo"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/service"
+	"os"
+	"path/filepath"
 )
 
+// ConfigPath Path to the configuration file
 var ConfigPath string
 
+// Handler Contains information about the user command handler
 type Handler struct {
 	params  Params
 	service *service.Service
 }
 
+// NewHandler Creates a new structure Handler
 func NewHandler(p Params) (*Handler, error) {
 	if ConfigPath == "" {
 		return nil, errors.New("no config")
@@ -22,7 +27,8 @@ func NewHandler(p Params) (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	r, err := repo.NewFileRepo(p.FileStorePath)
+	zipPath := filepath.Join(os.TempDir(), p.ArchiveName)
+	r, err := repo.NewFileRepo(p.FileStorePath, zipPath)
 	if err != nil {
 		return nil, err
 	}
@@ -34,6 +40,7 @@ func NewHandler(p Params) (*Handler, error) {
 	}, nil
 }
 
+// setConfig Sets the configuration from a file.
 func setConfig(path string, p *Params) error {
 	if path == "" {
 		return nil

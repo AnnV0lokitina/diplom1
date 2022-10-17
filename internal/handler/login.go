@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// Login User authorization by login and password.
 func (h *Handler) Login(ctx context.Context, in *pb.UserRegRequest) (*pb.UserRegResponse, error) {
 	password := in.GetPassword()
 	login := in.GetLogin()

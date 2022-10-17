@@ -2,5 +2,6 @@
     "server_address": "localhost:3200",
     "login": "login",
     "password": "password",
-    "file_store_path": "cmd/gophkeeper/file_store"
+    "file_store_path": "cmd/gophkeeper/file_store",
+    "archive_name": "user_archive.zip"
 }
