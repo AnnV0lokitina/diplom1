@@ -8,7 +8,7 @@ import (
 
 // WriteByChunks Write file by chunks.
 func (f *File) WriteByChunks(r io.Reader) error {
-	file, err := os.OpenFile(f.Path, os.O_WRONLY|os.O_CREATE, 0777)
+	file, err := os.OpenFile(f.Path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	if err != nil {
 		return err
 	}
