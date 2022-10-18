@@ -9,15 +9,6 @@ import (
 )
 
 func main() {
-	// разобраться что с zip
-	// написать тесты и readme
-	// добавить шифрование tls
-	// проверить все эндпоинты
-	// отформатировать проект
-	// написать все комментарии
-	// на клиенте интерфейсы - написать тесты 80%
-	// https://github.com/Netflix/go-expect
-	// log.SetLevel(log.PanicLevel)
 	p := handler.Params{}
 	app := &cli.App{
 		Name:  "gophkeeper",
