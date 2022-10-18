@@ -1,9 +1,23 @@
 package repo
 
+import (
+	"os"
+	"path/filepath"
+)
+
+func (r *Repo) removeFile(name string) error {
+	filePath := filepath.Join(r.storePath, name)
+	return os.Remove(filePath)
+}
+
 // RemoveTextFileByName Remove text file information from storage by name.
 func (r *Repo) RemoveTextFileByName(name string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+	err := r.removeFile(name)
+	if err != nil {
+		return err
+	}
 	for i := range r.record.TextFileList {
 		if r.record.TextFileList[i].Name == name {
 			r.record.TextFileList = append(r.record.TextFileList[:i], r.record.TextFileList[i+1:]...)
@@ -17,6 +31,10 @@ func (r *Repo) RemoveTextFileByName(name string) error {
 func (r *Repo) RemoveBinaryFileByName(name string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+	err := r.removeFile(name)
+	if err != nil {
+		return err
+	}
 	for i := range r.record.BinaryFileList {
 		if r.record.BinaryFileList[i].Name == name {
 			r.record.BinaryFileList = append(r.record.BinaryFileList[:i], r.record.BinaryFileList[i+1:]...)

@@ -62,7 +62,7 @@ func (s *Service) receiveInfo(ctx context.Context, session string) error {
 	}
 	err = s.repo.UnpackZIP()
 	if err != nil {
-		log.Error("send info: create zip error")
+		log.Error("send info: unpack zip error")
 		return err
 	}
 	log.Info("receive info: read file end")

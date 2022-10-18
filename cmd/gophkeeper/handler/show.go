@@ -64,11 +64,19 @@ func (h *Handler) ShowBankCardList(ctx context.Context) {
 
 func (h *Handler) GetCredentialsByLogin(ctx context.Context, login string) {
 	c := h.service.GetCredentialsByLogin(ctx, login)
+	if c == nil {
+		fmt.Println("Login password pair not found")
+		return
+	}
 	h.printCredentials(*c)
 }
 
 func (h *Handler) GetBankCardByNumber(ctx context.Context, number string) {
 	c := h.service.GetBankCardByNumber(ctx, number)
+	if c == nil {
+		fmt.Println("Bank card not found")
+		return
+	}
 	h.printBankCard(*c)
 }
 

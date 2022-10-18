@@ -13,7 +13,7 @@ type Writer struct {
 
 // NewWriter Create new writer.
 func NewWriter(filePath string) (*Writer, error) {
-	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
+	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	if err != nil {
 		return nil, err
 	}

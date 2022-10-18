@@ -267,7 +267,7 @@ func main() {
 					},
 					{
 						Name:  "text",
-						Usage: "remove text data",
+						Usage: "remove text data by filename",
 						Flags: []cli.Flag{
 							&cli.StringFlag{
 								Name:     "name",
@@ -286,7 +286,7 @@ func main() {
 					},
 					{
 						Name:  "binary",
-						Usage: "remove binary data",
+						Usage: "remove binary data by filename",
 						Flags: []cli.Flag{
 							&cli.StringFlag{
 								Name:     "name",
