@@ -70,6 +70,7 @@ github.com/sirupsen/logrus
 # github.com/stretchr/testify v1.8.0
 ## explicit; go 1.13
 github.com/stretchr/testify/assert
+github.com/stretchr/testify/require
 # github.com/urfave/cli/v2 v2.11.1
 ## explicit; go 1.18
 github.com/urfave/cli/v2

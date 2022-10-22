@@ -109,7 +109,7 @@ func (ec *ExtConnection) StoreInfo(ctx context.Context, session string, reader i
 		log.Errorf("error close stream: %s", err)
 		return NewError(err, ErrorTypeSaveToStorage)
 	}
-	log.Info("Route summary: %v", reply.Size)
+	log.Infof("Route summary: %v", reply.Size)
 	return nil
 }
 
@@ -143,7 +143,6 @@ func (ec *ExtConnection) RestoreInfo(ctx context.Context, session string, w io.W
 			log.Errorf("error write to file: %s", err)
 			return NewError(err, ErrorTypeRestoreFromStorage)
 		}
-		//log.Println(part)
 	}
 	return nil
 }

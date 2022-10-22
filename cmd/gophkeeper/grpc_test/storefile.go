@@ -1,8 +1,9 @@
-package handler
+package grpctest
 
 import (
 	"context"
 	"errors"
+	"fmt"
 	labelError "github.com/AnnV0lokitina/diplom1/pkg/error"
 	pb "github.com/AnnV0lokitina/diplom1/proto"
 	log "github.com/sirupsen/logrus"
@@ -22,8 +23,19 @@ type reqInfo struct {
 }
 
 // saveFile Save file to store.
-func (h *Handler) saveFile(ctx context.Context, sessionID string, time time.Time, r io.Reader) error {
-	err := h.service.StoreFile(ctx, sessionID, time, r)
+func (h *Handler) saveFile(_ context.Context, sessionID string, fileTime time.Time, r io.Reader) error {
+	if sessionID != CorrectSession {
+		if sessionID == WithErrorSession {
+			return errors.New("error user")
+		}
+		return labelError.NewLabelError(labelError.TypeUnauthorized, errors.New("user unauthorized"))
+	}
+	fmt.Println("TestFileDate.After(fileTime)", TestFileDate.After(fileTime))
+	if TestFileDate.After(fileTime) {
+		log.Error("received file is old")
+		return labelError.NewLabelError(labelError.TypeUpgradeRequired, errors.New("received file is old"))
+	}
+	err := h.WriteTestFile(r)
 	if err != nil {
 		return logError(status.Errorf(codes.Internal, "cannot save file to the store: %v", err))
 	}
@@ -56,6 +68,7 @@ func (h *Handler) readStream(stream pb.SecureStorage_StoreFileServer, w io.Write
 				Time:      req.GetInfo().GetTime().AsTime(),
 			}
 			ch <- info
+			close(ch)
 		} else {
 			if info.SessionID != req.GetSession() {
 				return fileSize, logError(status.Error(codes.Internal, "error in stream"))
@@ -97,7 +110,10 @@ func (h *Handler) StoreFile(stream pb.SecureStorage_StoreFileServer) error {
 	g.Go(func() error {
 		log.Info("start write info to file")
 		defer r.Close()
-		info := <-infoCh
+		info, opened := <-infoCh
+		if !opened {
+			return errors.New("no info")
+		}
 		return h.saveFile(ctx, info.SessionID, info.Time, r)
 	})
 
@@ -122,7 +138,7 @@ func (h *Handler) StoreFile(stream pb.SecureStorage_StoreFileServer) error {
 	log.Infof("saved file size: %d", res.Size)
 	err := stream.SendAndClose(res)
 	if err != nil {
-		return logError(status.Errorf(codes.Unknown, "cannot send response: %v", err))
+		return logError(status.Errorf(codes.Internal, "cannot send response: %v", err))
 	}
 
 	log.Info("stream closed")

@@ -81,13 +81,21 @@ func (h *Handler) GetBankCardByNumber(ctx context.Context, number string) {
 }
 
 func (h *Handler) GetTextFileByName(ctx context.Context, name string, path string) error {
-	//f := h.repo.GetTextFileByName(name)
-	//f.Name
+	f, err := h.service.UploadTextFileByNameIntoPath(ctx, name, path)
+	if err != nil {
+		fmt.Println("Error while uploading text file")
+		return err
+	}
+	fmt.Println(fmt.Sprintf("Successfully upload text file %s", f.Name))
 	return nil
 }
 
 func (h *Handler) GetBinaryDataByName(ctx context.Context, name string, path string) error {
-	//f := h.repo.GetTextFileByName(name)
-	//f.Name
+	f, err := h.service.UploadBinaryFileByNameIntoPath(ctx, name, path)
+	if err != nil {
+		fmt.Println(fmt.Sprintf("Error while uploading binary file %s", f.Name))
+		return nil
+	}
+	fmt.Println("Successfully upload binary file")
 	return nil
 }
