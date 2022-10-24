@@ -1,9 +1,13 @@
-package entity
+package filestorage
 
 import (
 	"encoding/json"
+	"errors"
+	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	"os"
 )
+
+var ErrorNoInfo = errors.New("no file or file empty")
 
 // Reader Store file pointer and decoder to read file.
 type Reader struct {
@@ -13,6 +17,10 @@ type Reader struct {
 
 // NewReader create Reader.
 func NewReader(filePath string) (*Reader, error) {
+	stat, err := os.Stat(filePath)
+	if os.IsNotExist(err) || stat.Size() == 0 {
+		return &Reader{}, ErrorNoInfo
+	}
 	file, err := os.OpenFile(filePath, os.O_RDONLY, 0777)
 	if err != nil {
 		return nil, err
@@ -23,14 +31,14 @@ func NewReader(filePath string) (*Reader, error) {
 	}, nil
 }
 
-// HasNext Show if file has next string.
-func (r *Reader) HasNext() bool {
-	return r.decoder.More()
+// Empty Check reader empty.
+func (r *Reader) Empty() bool {
+	return r.file == nil
 }
 
 // ReadRecord Read record from file.
-func (r *Reader) ReadRecord() (*Record, error) {
-	var record Record
+func (r *Reader) ReadRecord() (*entity.Record, error) {
+	var record entity.Record
 	if err := r.decoder.Decode(&record); err != nil {
 		return nil, err
 	}

@@ -3,21 +3,13 @@ package repo
 import (
 	"bufio"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
-	"io"
-	"os"
-	"path/filepath"
 )
 
 // AddTextFile Save text file information to storage.
 func (r *Repo) AddTextFile(file entity.File, reader *bufio.Reader) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	outFilePath := filepath.Join(r.storePath, file.Name)
-	fo, err := os.Create(outFilePath)
-	if err != nil {
-		return err
-	}
-	_, err = io.Copy(fo, reader)
+	err := r.enclosure.Save(file.Name, reader)
 	if err != nil {
 		return err
 	}
@@ -29,12 +21,7 @@ func (r *Repo) AddTextFile(file entity.File, reader *bufio.Reader) error {
 func (r *Repo) AddBinaryFile(file entity.File, reader *bufio.Reader) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	outFilePath := filepath.Join(r.storePath, file.Name)
-	fo, err := os.Create(outFilePath)
-	if err != nil {
-		return err
-	}
-	_, err = io.Copy(fo, reader)
+	err := r.enclosure.Save(file.Name, reader)
 	if err != nil {
 		return err
 	}

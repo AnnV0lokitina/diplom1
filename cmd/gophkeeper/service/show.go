@@ -66,7 +66,7 @@ func (s *Service) GetCredentialsByLogin(ctx context.Context, login string) *enti
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
-	return s.repo.GetCredentialsByNumber(login)
+	return s.repo.GetCredentialsByLogin(login)
 }
 
 func (s *Service) GetBankCardByNumber(ctx context.Context, number string) *entity.BankCard {
@@ -81,7 +81,11 @@ func (s *Service) GetBankCardByNumber(ctx context.Context, number string) *entit
 	return s.repo.GetBankCardByNumber(number)
 }
 
-func (s *Service) UploadTextFileByNameIntoPath(ctx context.Context, name string, outFilePath string) (*entity.File, error) {
+func (s *Service) UploadTextFileByNameIntoPath(
+	ctx context.Context,
+	name string,
+	outFilePath string,
+) (*entity.File, error) {
 	session, err := GetSession()
 	if err != nil {
 		session = ""
@@ -106,7 +110,11 @@ func (s *Service) UploadTextFileByNameIntoPath(ctx context.Context, name string,
 	return f, nil
 }
 
-func (s *Service) UploadBinaryFileByNameIntoPath(ctx context.Context, name string, outFilePath string) (*entity.File, error) {
+func (s *Service) UploadBinaryFileByNameIntoPath(
+	ctx context.Context,
+	name string,
+	outFilePath string,
+) (*entity.File, error) {
 	session, err := GetSession()
 	if err != nil {
 		session = ""

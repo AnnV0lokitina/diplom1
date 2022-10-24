@@ -1,12 +1,9 @@
 package repo
 
 import (
-	"bufio"
 	"errors"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	"io"
-	"os"
-	"path/filepath"
 )
 
 // GetTextFileList Get all text files information from storage.
@@ -29,12 +26,7 @@ func (r *Repo) GetTextFileByName(name string) (*entity.File, io.Reader, error) {
 	if file == nil {
 		return nil, nil, errors.New("not found")
 	}
-	inFilePath := filepath.Join(r.storePath, file.Name)
-	fileReader, err := os.OpenFile(inFilePath, os.O_RDONLY, 0777)
-	if err != nil {
-		return nil, nil, err
-	}
-	reader := bufio.NewReader(fileReader)
+	reader, err := r.enclosure.Open(file.Name)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -61,12 +53,7 @@ func (r *Repo) GetBinaryFileByName(name string) (*entity.File, io.Reader, error)
 	if file == nil {
 		return nil, nil, errors.New("not found")
 	}
-	inFilePath := filepath.Join(r.storePath, file.Name)
-	fileReader, err := os.OpenFile(inFilePath, os.O_RDONLY, 0777)
-	if err != nil {
-		return nil, nil, err
-	}
-	reader := bufio.NewReader(fileReader)
+	reader, err := r.enclosure.Open(file.Name)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -80,8 +67,8 @@ func (r *Repo) GetCredentialsList() []entity.Credentials {
 	return r.record.CredentialsList
 }
 
-// GetCredentialsByNumber Get credentials from storage by number.
-func (r *Repo) GetCredentialsByNumber(login string) *entity.Credentials {
+// GetCredentialsByLogin Get credentials from storage by number.
+func (r *Repo) GetCredentialsByLogin(login string) *entity.Credentials {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	for i := range r.record.BinaryFileList {

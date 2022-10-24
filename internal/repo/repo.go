@@ -3,7 +3,6 @@ package repo
 import (
 	"github.com/AnnV0lokitina/diplom1/internal/entity"
 	labelError "github.com/AnnV0lokitina/diplom1/pkg/error"
-	"github.com/AnnV0lokitina/diplom1/pkg/file"
 	log "github.com/sirupsen/logrus"
 	"io"
 	"path/filepath"
@@ -28,7 +27,7 @@ func (r *Repo) GetInfo(fileName string) (*entity.FileInfo, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	file := file.File{
+	file := archive.File{
 		Path: filepath.Join(r.storePath, fileName),
 	}
 	info, err := file.GetInfo()
@@ -45,7 +44,7 @@ func (r *Repo) Read(fileName string, w io.Writer) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	source := file.File{
+	source := archive.File{
 		Path: filepath.Join(r.storePath, fileName),
 	}
 
@@ -58,7 +57,7 @@ func (r *Repo) Write(fileName string, reader io.Reader) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	source := file.File{
+	source := archive.File{
 		Path: filepath.Join(r.storePath, fileName),
 	}
 

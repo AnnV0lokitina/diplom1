@@ -3,8 +3,8 @@ package external
 import (
 	"bytes"
 	"context"
+	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	grpcTest "github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/grpc_test"
-	"github.com/AnnV0lokitina/diplom1/internal/entity"
 	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"

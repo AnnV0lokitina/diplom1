@@ -1,8 +1,9 @@
-package entity
+package filestorage
 
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"os"
@@ -12,8 +13,8 @@ import (
 
 const testReaderFileName = "/test_reader"
 
-func genRecord() (*Record, string) {
-	credentialsList := []Credentials{
+func genRecord() (*entity.Record, string) {
+	credentialsList := []entity.Credentials{
 		{
 			Login:    "login",
 			Password: "password",
@@ -25,7 +26,7 @@ func genRecord() (*Record, string) {
 			Meta:     "credentials meta 1",
 		},
 	}
-	textFileList := []File{
+	textFileList := []entity.File{
 		{
 			Name: "text_name.ext",
 			Meta: "text file meta",
@@ -35,7 +36,7 @@ func genRecord() (*Record, string) {
 			Meta: "text file meta1",
 		},
 	}
-	binaryFileList := []File{
+	binaryFileList := []entity.File{
 		{
 			Name: "bin_name.ext",
 			Meta: "bin file meta",
@@ -45,7 +46,7 @@ func genRecord() (*Record, string) {
 			Meta: "bin file meta1",
 		},
 	}
-	bankCardList := []BankCard{
+	bankCardList := []entity.BankCard{
 		{
 			Number:     "card number",
 			ExpDate:    "card exp_date",
@@ -61,7 +62,7 @@ func genRecord() (*Record, string) {
 			Meta:       "card meta1",
 		},
 	}
-	obj := Record{
+	obj := entity.Record{
 		CredentialsList: credentialsList,
 		TextFileList:    textFileList,
 		BinaryFileList:  binaryFileList,
@@ -78,14 +79,14 @@ func TestNewReader(t *testing.T) {
 		fileContent string
 	}
 	type resultInterface interface {
-		HasNext() bool
-		ReadRecord() (*Record, error)
+		Empty() bool
+		ReadRecord() (*entity.Record, error)
 		Close() error
 	}
 	type want struct {
 		resultType      string
 		interfaceObject interface{}
-		record          *Record
+		record          *entity.Record
 	}
 	tmpDir := os.TempDir()
 	testDir, err := os.MkdirTemp(tmpDir, "test")
@@ -108,7 +109,7 @@ func TestNewReader(t *testing.T) {
 				fileContent: jsonRecord,
 			},
 			want: want{
-				resultType:      "*entity.Reader",
+				resultType:      "*filestorage.Reader",
 				interfaceObject: (*resultInterface)(nil),
 				record:          objRecord,
 			},
@@ -132,13 +133,11 @@ func TestNewReader(t *testing.T) {
 			}
 			assert.Equalf(t, tt.want.resultType, reflect.TypeOf(r).String(), "NewReader(%v)", tt.args.filePath)
 			assert.Implements(t, tt.want.interfaceObject, r, "Invalid reader interface")
-			assert.Equalf(t, true, r.HasNext(), "HasNext()")
 			rec, err := r.ReadRecord()
 			if !tt.wantURLErr(t, err, "decode record") {
 				return
 			}
 			assert.Equal(t, tt.want.record, rec)
-			assert.Equalf(t, false, r.HasNext(), "HasNext()")
 			tt.wantCloseErr(t, r.Close(), "Close()")
 			os.Remove(tt.args.filePath)
 		})

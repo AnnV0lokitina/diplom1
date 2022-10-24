@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/handler"
 	"github.com/urfave/cli/v2"
 	"os"
@@ -9,18 +10,50 @@ import (
 )
 
 func main() {
-	p := handler.Params{}
+	p := entity.Params{}
 	app := &cli.App{
 		Name:  "gophkeeper",
 		Usage: "password store",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:        "server",
-				Aliases:     []string{"s"},
-				Value:       "localhost:8000",
+				Name:        "server address",
+				Aliases:     []string{"a"},
+				Value:       "localhost:3200",
 				Usage:       "Server address",
 				EnvVars:     []string{"SERVER_ADDRESS"},
 				Destination: &p.ServerAddress,
+			},
+			&cli.StringFlag{
+				Name:        "file store path",
+				Aliases:     []string{"f"},
+				Value:       "cmd/gophkeeper/file_store",
+				Usage:       "File store path",
+				EnvVars:     []string{"FILE_STORE_PATH"},
+				Destination: &p.FileStorePath,
+			},
+			&cli.StringFlag{
+				Name:        "archive name",
+				Aliases:     []string{"n"},
+				Value:       "user_archive.zip",
+				Usage:       "Archive name",
+				EnvVars:     []string{"FILE_STORE_PATH"},
+				Destination: &p.ArchiveName,
+			},
+			&cli.StringFlag{
+				Name:        "data file name",
+				Aliases:     []string{"d"},
+				Value:       "data.json",
+				Usage:       "Data file name",
+				EnvVars:     []string{"DATA_FILE_NAME"},
+				Destination: &p.DataFileName,
+			},
+			&cli.StringFlag{
+				Name:        "file with session",
+				Aliases:     []string{"s"},
+				Value:       "keeper_session.txt",
+				Usage:       "File with session",
+				EnvVars:     []string{"SESSION"},
+				Destination: &p.Session,
 			},
 			&cli.StringFlag{
 				Name:        "config",

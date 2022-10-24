@@ -2,7 +2,7 @@ package external
 
 import (
 	"context"
-	"github.com/AnnV0lokitina/diplom1/internal/entity"
+	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	pb "github.com/AnnV0lokitina/diplom1/proto"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"

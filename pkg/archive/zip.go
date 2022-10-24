@@ -1,14 +1,20 @@
-package zip
+package archive
 
 import (
 	"archive/zip"
+	log "github.com/sirupsen/logrus"
 	"io"
 	"os"
 	"path/filepath"
 )
 
-// Pack files from source folder to target archive.
-func Pack(source, target string) error {
+func (f *Archive) Pack() error {
+	log.Println("Pack", f.sourceDir, f.path)
+	return packZIP(f.sourceDir, f.path)
+}
+
+// packZIP files from source folder to target archive.
+func packZIP(source, target string) error {
 	f, err := os.Create(target)
 	if err != nil {
 		return err

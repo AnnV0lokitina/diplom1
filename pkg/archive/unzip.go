@@ -1,4 +1,4 @@
-package zip
+package archive
 
 import (
 	"archive/zip"
@@ -8,8 +8,13 @@ import (
 	"path/filepath"
 )
 
-// Unpack Get files from source archive to destination folder.
-func Unpack(source, destination string) error {
+func (f *Archive) Unpack() error {
+	log.Println("Unpack", f.path, f.sourceDir)
+	return unpackZIP(f.path, f.sourceDir)
+}
+
+// unpackZIP Get files from source archive to destination folder.
+func unpackZIP(source, destination string) error {
 	reader, err := zip.OpenReader(source)
 	if err != nil {
 		log.Errorf("unzip: cannot open reader %s", source)

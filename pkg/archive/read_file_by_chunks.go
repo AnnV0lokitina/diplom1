@@ -1,4 +1,4 @@
-package file
+package archive
 
 import (
 	"bufio"
@@ -9,8 +9,8 @@ import (
 )
 
 // ReadByChunks Read file by chunks.
-func (f *File) ReadByChunks(w io.Writer) error {
-	file, err := os.Open(f.Path)
+func (f *Archive) ReadByChunks(w io.Writer) error {
+	file, err := os.Open(f.path)
 	if err != nil {
 		return errors.New("open file error")
 	}

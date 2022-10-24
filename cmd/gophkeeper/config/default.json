@@ -3,5 +3,6 @@
     "login": "login",
     "password": "password",
     "file_store_path": "cmd/gophkeeper/file_store",
-    "archive_name": "user_archive.zip"
+    "archive_name": "user_archive.zip",
+    "data_file_name": "data.json"
 }

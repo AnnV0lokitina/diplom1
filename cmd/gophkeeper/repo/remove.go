@@ -1,20 +1,10 @@
 package repo
 
-import (
-	"os"
-	"path/filepath"
-)
-
-func (r *Repo) removeFile(name string) error {
-	filePath := filepath.Join(r.storePath, name)
-	return os.Remove(filePath)
-}
-
 // RemoveTextFileByName Remove text file information from storage by name.
 func (r *Repo) RemoveTextFileByName(name string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	err := r.removeFile(name)
+	err := r.enclosure.Remove(name)
 	if err != nil {
 		return err
 	}
@@ -31,7 +21,7 @@ func (r *Repo) RemoveTextFileByName(name string) error {
 func (r *Repo) RemoveBinaryFileByName(name string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	err := r.removeFile(name)
+	err := r.enclosure.Remove(name)
 	if err != nil {
 		return err
 	}

@@ -1,8 +1,9 @@
-package entity
+package filestorage
 
 import (
 	"bytes"
 	"fmt"
+	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io"
@@ -16,10 +17,10 @@ const testWriterFileName = "/test_writer"
 func TestNewWriter(t *testing.T) {
 	type args struct {
 		filePath string
-		record   *Record
+		record   *entity.Record
 	}
 	type resultInterface interface {
-		WriteRecord(record *Record) error
+		WriteRecord(record *entity.Record) error
 		Close() error
 	}
 	type want struct {
@@ -48,7 +49,7 @@ func TestNewWriter(t *testing.T) {
 				record:   objRecord,
 			},
 			want: want{
-				resultType:      "*entity.Writer",
+				resultType:      "*filestorage.Writer",
 				interfaceObject: (*resultInterface)(nil),
 				record:          jsonRecord + "\n",
 			},

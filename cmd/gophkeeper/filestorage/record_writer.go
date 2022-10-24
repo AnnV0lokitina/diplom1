@@ -1,7 +1,8 @@
-package entity
+package filestorage
 
 import (
 	"encoding/json"
+	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	"os"
 )
 
@@ -24,7 +25,7 @@ func NewWriter(filePath string) (*Writer, error) {
 }
 
 // WriteRecord Write record to file.
-func (w *Writer) WriteRecord(record *Record) error {
+func (w *Writer) WriteRecord(record *entity.Record) error {
 	return w.encoder.Encode(record)
 }
 
