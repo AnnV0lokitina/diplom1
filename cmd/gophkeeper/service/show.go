@@ -10,7 +10,7 @@ import (
 )
 
 func (s *Service) ShowCredentialsList(ctx context.Context) []entity.Credentials {
-	session, err := GetSession()
+	session, err := s.session.Get()
 	if err != nil {
 		session = ""
 	}
@@ -22,7 +22,7 @@ func (s *Service) ShowCredentialsList(ctx context.Context) []entity.Credentials 
 }
 
 func (s *Service) ShowTextFilesList(ctx context.Context) []entity.File {
-	session, err := GetSession()
+	session, err := s.session.Get()
 	if err != nil {
 		session = ""
 	}
@@ -34,7 +34,7 @@ func (s *Service) ShowTextFilesList(ctx context.Context) []entity.File {
 }
 
 func (s *Service) ShowBinaryDataList(ctx context.Context) []entity.File {
-	session, err := GetSession()
+	session, err := s.session.Get()
 	if err != nil {
 		session = ""
 	}
@@ -46,7 +46,7 @@ func (s *Service) ShowBinaryDataList(ctx context.Context) []entity.File {
 }
 
 func (s *Service) ShowBankCardList(ctx context.Context) []entity.BankCard {
-	session, err := GetSession()
+	session, err := s.session.Get()
 	if err != nil {
 		session = ""
 	}
@@ -58,7 +58,7 @@ func (s *Service) ShowBankCardList(ctx context.Context) []entity.BankCard {
 }
 
 func (s *Service) GetCredentialsByLogin(ctx context.Context, login string) *entity.Credentials {
-	session, err := GetSession()
+	session, err := s.session.Get()
 	if err != nil {
 		session = ""
 	}
@@ -70,7 +70,7 @@ func (s *Service) GetCredentialsByLogin(ctx context.Context, login string) *enti
 }
 
 func (s *Service) GetBankCardByNumber(ctx context.Context, number string) *entity.BankCard {
-	session, err := GetSession()
+	session, err := s.session.Get()
 	if err != nil {
 		session = ""
 	}
@@ -86,7 +86,7 @@ func (s *Service) UploadTextFileByNameIntoPath(
 	name string,
 	outFilePath string,
 ) (*entity.File, error) {
-	session, err := GetSession()
+	session, err := s.session.Get()
 	if err != nil {
 		session = ""
 	}
@@ -115,7 +115,7 @@ func (s *Service) UploadBinaryFileByNameIntoPath(
 	name string,
 	outFilePath string,
 ) (*entity.File, error) {
-	session, err := GetSession()
+	session, err := s.session.Get()
 	if err != nil {
 		session = ""
 	}

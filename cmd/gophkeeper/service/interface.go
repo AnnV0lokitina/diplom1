@@ -37,3 +37,8 @@ type ExtConnection interface {
 	StoreInfo(ctx context.Context, session string, reader io.Reader, info *entity.FileInfo) error
 	RestoreInfo(ctx context.Context, session string, w io.Writer, fileInfo *entity.FileInfo) error
 }
+
+type Session interface {
+	Save(sessionID string) error
+	Get() (string, error)
+}

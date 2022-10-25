@@ -125,7 +125,7 @@ func (s *Service) RestoreFile(
 	log.Info("start restore file")
 	info, err := s.repo.GetInfo(user.Login)
 	if err != nil {
-		log.Info("no file to restore: %s", err)
+		log.Infof("no file to restore: %s", err)
 		return err
 	}
 	if info.UpdateTime.Before(time) {

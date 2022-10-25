@@ -31,11 +31,10 @@ func NewHandler(p entity.Params) (*Handler, error) {
 			return nil, err
 		}
 	}
-	zipPath := filepath.Join(os.TempDir(), p.ArchiveName)
 	filePath := filepath.Join(p.FileStorePath, p.DataFileName)
 	enclosure := filestorage.NewEnclosure(p.FileStorePath)
 	log.Info("create enclosure manager")
-	archive := archive.NewArchive(p.FileStorePath, zipPath)
+	archive := archive.NewArchive(p.FileStorePath, os.TempDir(), p.ArchiveName)
 	log.Info("create archive manager")
 	writer, err := filestorage.NewWriter(filePath)
 	if err != nil {
@@ -57,7 +56,8 @@ func NewHandler(p entity.Params) (*Handler, error) {
 	log.Info("create repository")
 	c := external.NewExtConnection(p.ServerAddress, p.FileStorePath)
 	log.Info("create external storage manager")
-	s := service.NewService(r, c)
+	sessStorage := filestorage.NewSession(p.Session)
+	s := service.NewService(r, c, sessStorage)
 	log.Info("create service")
 	return &Handler{
 		params:  p,

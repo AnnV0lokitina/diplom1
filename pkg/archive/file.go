@@ -4,27 +4,26 @@ import (
 	"errors"
 	log "github.com/sirupsen/logrus"
 	"os"
+	"path/filepath"
 )
 
 // ChunkSize Default chunk size
 const ChunkSize = 16
 
-// Archive keep information about file.
-type Archive struct {
-	path      string
-	sourceDir string
+type File struct {
+	zipStorePath string
 }
 
-func NewArchive(sourceDir string, path string) *Archive {
-	return &Archive{
-		path:      path,
-		sourceDir: sourceDir,
+func NewFile(zipStorePath string) *File {
+	return &File{
+		zipStorePath: zipStorePath,
 	}
 }
 
 // GetInfo Return the information about file.
-func (f *Archive) GetInfo() (os.FileInfo, error) {
-	stat, err := os.Stat(f.path)
+func (f *File) GetInfo(zipName string) (os.FileInfo, error) {
+	path := filepath.Join(f.zipStorePath, zipName)
+	stat, err := os.Stat(path)
 	if os.IsNotExist(err) || stat.Size() == 0 {
 		log.Warning("no local content")
 		return stat, errors.New("no content")

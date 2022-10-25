@@ -5,20 +5,19 @@ import (
 	labelError "github.com/AnnV0lokitina/diplom1/pkg/error"
 	log "github.com/sirupsen/logrus"
 	"io"
-	"path/filepath"
 	"sync"
 )
 
 // Repo keep information about file repository.
 type Repo struct {
-	mu        sync.Mutex
-	storePath string
+	mu   sync.Mutex
+	file File
 }
 
 // NewRepo Create new Repo struct.
-func NewRepo(storePath string) *Repo {
+func NewRepo(f File) *Repo {
 	return &Repo{
-		storePath: storePath,
+		file: f,
 	}
 }
 
@@ -27,10 +26,7 @@ func (r *Repo) GetInfo(fileName string) (*entity.FileInfo, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	file := archive.File{
-		Path: filepath.Join(r.storePath, fileName),
-	}
-	info, err := file.GetInfo()
+	info, err := r.file.GetInfo(fileName)
 	if err != nil {
 		return nil, labelError.NewLabelError(labelError.TypeUpgradeRequired, err)
 	}
@@ -44,12 +40,8 @@ func (r *Repo) Read(fileName string, w io.Writer) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	source := archive.File{
-		Path: filepath.Join(r.storePath, fileName),
-	}
-
-	log.Infof("read file by chunks path: %s", source.Path)
-	return source.ReadByChunks(w)
+	log.Infof("read file by chunks: %s", fileName)
+	return r.file.ReadByChunks(fileName, w)
 }
 
 // Write file from stream
@@ -57,10 +49,6 @@ func (r *Repo) Write(fileName string, reader io.Reader) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	source := archive.File{
-		Path: filepath.Join(r.storePath, fileName),
-	}
-
-	log.Infof("write file by chunks path: %s", source.Path)
-	return source.WriteByChunks(reader)
+	log.Infof("write file by chunks: %s", fileName)
+	return r.file.WriteByChunks(fileName, reader)
 }

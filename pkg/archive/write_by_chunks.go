@@ -4,11 +4,13 @@ import (
 	log "github.com/sirupsen/logrus"
 	"io"
 	"os"
+	"path/filepath"
 )
 
 // WriteByChunks Write file by chunks.
-func (f *Archive) WriteByChunks(r io.Reader) error {
-	file, err := os.OpenFile(f.path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+func (f *File) WriteByChunks(zipName string, r io.Reader) error {
+	path := filepath.Join(f.zipStorePath, zipName)
+	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	if err != nil {
 		return err
 	}

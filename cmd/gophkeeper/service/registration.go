@@ -10,7 +10,7 @@ func (s *Service) Register(ctx context.Context, login string, password string) e
 	if err != nil {
 		return err
 	}
-	return SaveSession(session)
+	return s.session.Save(session)
 }
 
 // Login Authorizes a user on a remote server.
@@ -19,5 +19,5 @@ func (s *Service) Login(ctx context.Context, login string, password string) erro
 	if err != nil {
 		return err
 	}
-	return SaveSession(session)
+	return s.session.Save(session)
 }

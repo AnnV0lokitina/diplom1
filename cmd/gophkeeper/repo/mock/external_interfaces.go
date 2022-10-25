@@ -219,19 +219,19 @@ func (m *MockArchive) EXPECT() *MockArchiveMockRecorder {
 	return m.recorder
 }
 
-// GetInfo mocks base method.
-func (m *MockArchive) GetInfo() (os.FileInfo, error) {
+// GetZIPInfo mocks base method.
+func (m *MockArchive) GetZIPInfo() (os.FileInfo, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetInfo")
+	ret := m.ctrl.Call(m, "GetZIPInfo")
 	ret0, _ := ret[0].(os.FileInfo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetInfo indicates an expected call of GetInfo.
-func (mr *MockArchiveMockRecorder) GetInfo() *gomock.Call {
+// GetZIPInfo indicates an expected call of GetZIPInfo.
+func (mr *MockArchiveMockRecorder) GetZIPInfo() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInfo", reflect.TypeOf((*MockArchive)(nil).GetInfo))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetZIPInfo", reflect.TypeOf((*MockArchive)(nil).GetZIPInfo))
 }
 
 // Pack mocks base method.
@@ -248,18 +248,18 @@ func (mr *MockArchiveMockRecorder) Pack() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Pack", reflect.TypeOf((*MockArchive)(nil).Pack))
 }
 
-// ReadByChunks mocks base method.
-func (m *MockArchive) ReadByChunks(w io.Writer) error {
+// ReadZIPByChunks mocks base method.
+func (m *MockArchive) ReadZIPByChunks(w io.Writer) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ReadByChunks", w)
+	ret := m.ctrl.Call(m, "ReadZIPByChunks", w)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// ReadByChunks indicates an expected call of ReadByChunks.
-func (mr *MockArchiveMockRecorder) ReadByChunks(w interface{}) *gomock.Call {
+// ReadZIPByChunks indicates an expected call of ReadZIPByChunks.
+func (mr *MockArchiveMockRecorder) ReadZIPByChunks(w interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadByChunks", reflect.TypeOf((*MockArchive)(nil).ReadByChunks), w)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadZIPByChunks", reflect.TypeOf((*MockArchive)(nil).ReadZIPByChunks), w)
 }
 
 // Unpack mocks base method.
@@ -276,16 +276,16 @@ func (mr *MockArchiveMockRecorder) Unpack() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Unpack", reflect.TypeOf((*MockArchive)(nil).Unpack))
 }
 
-// WriteByChunks mocks base method.
-func (m *MockArchive) WriteByChunks(r io.Reader) error {
+// WriteZIPByChunks mocks base method.
+func (m *MockArchive) WriteZIPByChunks(r io.Reader) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "WriteByChunks", r)
+	ret := m.ctrl.Call(m, "WriteZIPByChunks", r)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// WriteByChunks indicates an expected call of WriteByChunks.
-func (mr *MockArchiveMockRecorder) WriteByChunks(r interface{}) *gomock.Call {
+// WriteZIPByChunks indicates an expected call of WriteZIPByChunks.
+func (mr *MockArchiveMockRecorder) WriteZIPByChunks(r interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WriteByChunks", reflect.TypeOf((*MockArchive)(nil).WriteByChunks), r)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WriteZIPByChunks", reflect.TypeOf((*MockArchive)(nil).WriteZIPByChunks), r)
 }

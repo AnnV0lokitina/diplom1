@@ -7,6 +7,7 @@ import (
 	handlerGRPCPkg "github.com/AnnV0lokitina/diplom1/internal/handler"
 	repoPkg "github.com/AnnV0lokitina/diplom1/internal/repo"
 	servicePkg "github.com/AnnV0lokitina/diplom1/internal/service"
+	"github.com/AnnV0lokitina/diplom1/pkg/archive"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"os"
@@ -37,7 +38,8 @@ func main() {
 	}
 	defer db.Close(ctx)
 
-	repo := repoPkg.NewRepo(cfg.UserFileStore)
+	fileManager := archive.NewFile(cfg.UserFileStore)
+	repo := repoPkg.NewRepo(fileManager)
 
 	service := servicePkg.NewService(db, repo)
 	handler := &GRPCService{

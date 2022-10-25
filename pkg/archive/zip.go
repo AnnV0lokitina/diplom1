@@ -8,9 +8,10 @@ import (
 	"path/filepath"
 )
 
-func (f *Archive) Pack() error {
-	log.Println("Pack", f.sourceDir, f.path)
-	return packZIP(f.sourceDir, f.path)
+func (arch *Archive) Pack() error {
+	path := filepath.Join(arch.File.zipStorePath, arch.zipName)
+	log.Println("Pack", arch.sourceDir, path)
+	return packZIP(arch.sourceDir, path)
 }
 
 // packZIP files from source folder to target archive.

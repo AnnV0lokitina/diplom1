@@ -6,7 +6,7 @@ import (
 )
 
 func (s *Service) RemoveCredentialsByLogin(ctx context.Context, login string) error {
-	session, err := GetSession()
+	session, err := s.session.Get()
 	if err != nil {
 		session = ""
 	}
@@ -22,7 +22,7 @@ func (s *Service) RemoveCredentialsByLogin(ctx context.Context, login string) er
 }
 
 func (s *Service) RemoveTextByName(ctx context.Context, name string) error {
-	session, err := GetSession()
+	session, err := s.session.Get()
 	if err != nil {
 		session = ""
 	}
@@ -38,7 +38,7 @@ func (s *Service) RemoveTextByName(ctx context.Context, name string) error {
 }
 
 func (s *Service) RemoveBinaryDataByName(ctx context.Context, name string) error {
-	session, err := GetSession()
+	session, err := s.session.Get()
 	if err != nil {
 		session = ""
 	}
@@ -54,7 +54,7 @@ func (s *Service) RemoveBinaryDataByName(ctx context.Context, name string) error
 }
 
 func (s *Service) RemoveBankCardByNumber(ctx context.Context, number string) error {
-	session, err := GetSession()
+	session, err := s.session.Get()
 	if err != nil {
 		session = ""
 	}

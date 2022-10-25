@@ -8,9 +8,10 @@ import (
 	"path/filepath"
 )
 
-func (f *Archive) Unpack() error {
-	log.Println("Unpack", f.path, f.sourceDir)
-	return unpackZIP(f.path, f.sourceDir)
+func (arch *Archive) Unpack() error {
+	path := filepath.Join(arch.File.zipStorePath, arch.zipName)
+	log.Println("Unpack", path, arch.sourceDir)
+	return unpackZIP(path, arch.sourceDir)
 }
 
 // unpackZIP Get files from source archive to destination folder.

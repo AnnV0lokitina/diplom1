@@ -6,11 +6,13 @@ import (
 	log "github.com/sirupsen/logrus"
 	"io"
 	"os"
+	"path/filepath"
 )
 
 // ReadByChunks Read file by chunks.
-func (f *Archive) ReadByChunks(w io.Writer) error {
-	file, err := os.Open(f.path)
+func (f *File) ReadByChunks(zipName string, w io.Writer) error {
+	path := filepath.Join(f.zipStorePath, zipName)
+	file, err := os.Open(path)
 	if err != nil {
 		return errors.New("open file error")
 	}

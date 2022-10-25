@@ -11,7 +11,7 @@ import (
 
 // AddCredentials Saves a pair of login and password.
 func (s *Service) AddCredentials(ctx context.Context, login string, password string, meta string) error {
-	session, err := GetSession()
+	session, err := s.session.Get()
 	if err != nil {
 		session = ""
 	}
@@ -33,7 +33,7 @@ func (s *Service) AddCredentials(ctx context.Context, login string, password str
 
 // AddTextFromFile Saves a text from file to storage.
 func (s *Service) AddTextFromFile(ctx context.Context, path string, meta string) error {
-	session, err := GetSession()
+	session, err := s.session.Get()
 	if err != nil {
 		session = ""
 	}
@@ -66,7 +66,7 @@ func (s *Service) AddTextFromFile(ctx context.Context, path string, meta string)
 
 // AddBinaryDataFromFile Saves a binary file to storage.
 func (s *Service) AddBinaryDataFromFile(ctx context.Context, path string, meta string) error {
-	session, err := GetSession()
+	session, err := s.session.Get()
 	if err != nil {
 		session = ""
 	}
@@ -106,7 +106,7 @@ func (s *Service) AddBankCard(
 	code string,
 	meta string,
 ) error {
-	session, err := GetSession()
+	session, err := s.session.Get()
 	if err != nil {
 		session = ""
 	}

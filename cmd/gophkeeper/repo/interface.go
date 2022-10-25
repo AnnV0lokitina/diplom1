@@ -24,9 +24,9 @@ type FileStorageEnclosure interface {
 }
 
 type Archive interface {
-	ReadByChunks(w io.Writer) error
-	WriteByChunks(r io.Reader) error
+	ReadZIPByChunks(w io.Writer) error
+	WriteZIPByChunks(r io.Reader) error
 	Pack() error
 	Unpack() error
-	GetInfo() (os.FileInfo, error)
+	GetZIPInfo() (os.FileInfo, error)
 }

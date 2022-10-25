@@ -22,7 +22,7 @@ func (r *Repo) GetInfo() (*entity.FileInfo, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	info, err := r.archive.GetInfo()
+	info, err := r.archive.GetZIPInfo()
 	if err != nil {
 		return &entity.FileInfo{
 			UpdateTime: time.Time{},
@@ -36,11 +36,11 @@ func (r *Repo) GetInfo() (*entity.FileInfo, error) {
 func (r *Repo) ReadFileByChunks(w io.Writer) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	return r.archive.ReadByChunks(w)
+	return r.archive.ReadZIPByChunks(w)
 }
 
 func (r *Repo) WriteFileByChunks(reader io.Reader) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	return r.archive.WriteByChunks(reader)
+	return r.archive.WriteZIPByChunks(reader)
 }

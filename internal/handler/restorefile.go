@@ -24,7 +24,7 @@ func (h *Handler) readFile(ctx context.Context, sessionID string, fileInfo *pb.F
 
 // sendFile Send file to user.
 func (h *Handler) sendFile(stream pb.SecureStorage_RestoreFileServer, r io.Reader) error {
-	buf := make([]byte, archive.ChunkSize)
+	buf := make([]byte, 16)
 	for {
 		log.Println("start send file")
 		n, err := r.Read(buf)
