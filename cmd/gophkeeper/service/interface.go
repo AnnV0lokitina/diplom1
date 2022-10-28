@@ -1,15 +1,14 @@
 package service
 
 import (
-	"bufio"
 	"context"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	"io"
 )
 
 type Repo interface {
-	AddTextFile(file entity.File, reader *bufio.Reader) error
-	AddBinaryFile(file entity.File, reader *bufio.Reader) error
+	AddTextFile(file entity.File, reader io.Reader) error
+	AddBinaryFile(file entity.File, reader io.Reader) error
 	AddCredentials(cred entity.Credentials) error
 	AddBankCard(card entity.BankCard) error
 	GetTextFileList() []entity.File

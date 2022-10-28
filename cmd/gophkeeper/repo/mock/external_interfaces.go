@@ -6,8 +6,8 @@ package mock
 
 import (
 	io "io"
-	os "os"
 	reflect "reflect"
+	time "time"
 
 	entity "github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	gomock "github.com/golang/mock/gomock"
@@ -219,19 +219,19 @@ func (m *MockArchive) EXPECT() *MockArchiveMockRecorder {
 	return m.recorder
 }
 
-// GetZIPInfo mocks base method.
-func (m *MockArchive) GetZIPInfo() (os.FileInfo, error) {
+// GetZIPModTime mocks base method.
+func (m *MockArchive) GetZIPModTime() (time.Time, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetZIPInfo")
-	ret0, _ := ret[0].(os.FileInfo)
+	ret := m.ctrl.Call(m, "GetZIPModTime")
+	ret0, _ := ret[0].(time.Time)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetZIPInfo indicates an expected call of GetZIPInfo.
-func (mr *MockArchiveMockRecorder) GetZIPInfo() *gomock.Call {
+// GetZIPModTime indicates an expected call of GetZIPModTime.
+func (mr *MockArchiveMockRecorder) GetZIPModTime() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetZIPInfo", reflect.TypeOf((*MockArchive)(nil).GetZIPInfo))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetZIPModTime", reflect.TypeOf((*MockArchive)(nil).GetZIPModTime))
 }
 
 // Pack mocks base method.
