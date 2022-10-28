@@ -25,10 +25,8 @@ func (f *File) ReadByChunks(zipName string, w io.Writer) error {
 		n, err := reader.Read(buf)
 		if err != nil {
 			if err != io.EOF {
-				if err != nil {
-					log.Error("read file chunk error")
-					return errors.New("read file chunk error")
-				}
+				log.Error("read file chunk error")
+				return errors.New("read file chunk error")
 			}
 			break
 		}

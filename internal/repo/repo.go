@@ -26,12 +26,12 @@ func (r *Repo) GetInfo(fileName string) (*entity.FileInfo, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	info, err := r.file.GetInfo(fileName)
+	modTime, err := r.file.GetModTime(fileName)
 	if err != nil {
 		return nil, labelError.NewLabelError(labelError.TypeUpgradeRequired, err)
 	}
 	return &entity.FileInfo{
-		UpdateTime: info.ModTime(),
+		UpdateTime: modTime,
 	}, nil
 }
 

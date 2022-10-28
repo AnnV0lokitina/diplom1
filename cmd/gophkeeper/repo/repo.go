@@ -27,7 +27,9 @@ func NewFileRepo(
 		err    error
 	)
 	if !reader.Empty() {
-		defer reader.Close()
+		defer func() {
+			err = reader.Close()
+		}()
 		record, err = reader.ReadRecord()
 		if err != nil {
 			return nil, err
@@ -41,7 +43,7 @@ func NewFileRepo(
 		enclosure: enclosure,
 		archive:   archive,
 		reader:    reader,
-	}, nil
+	}, err
 }
 
 // Close Closes file writer if information stored in file.

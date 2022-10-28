@@ -7,6 +7,7 @@ import (
 	handlerGRPCPkg "github.com/AnnV0lokitina/diplom1/internal/handler"
 	repoPkg "github.com/AnnV0lokitina/diplom1/internal/repo"
 	servicePkg "github.com/AnnV0lokitina/diplom1/internal/service"
+	"github.com/AnnV0lokitina/diplom1/migrations"
 	"github.com/AnnV0lokitina/diplom1/pkg/archive"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -18,7 +19,7 @@ import (
 func main() {
 	cfg := initConfig()
 	initParams(cfg)
-	err := doMigrates(cfg.DataBaseURI)
+	err := migrations.DoMigrates(cfg.DataBaseURI)
 	if err != nil {
 		log.WithError(err).Fatal("migrations error")
 	}

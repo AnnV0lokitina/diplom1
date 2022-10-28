@@ -2,7 +2,7 @@ package archive
 
 import (
 	"io"
-	"os"
+	"time"
 )
 
 // Archive keep information about file.
@@ -22,9 +22,9 @@ func NewArchive(sourceDir string, zipStorePath string, zipName string) *Archive 
 	}
 }
 
-// GetZIPInfo Return the information about file.
-func (arch *Archive) GetZIPInfo() (os.FileInfo, error) {
-	return arch.GetInfo(arch.zipName)
+// GetZIPModTime Return the time of last modification.
+func (arch *Archive) GetZIPModTime() (time.Time, error) {
+	return arch.GetModTime(arch.zipName)
 }
 
 // ReadZIPByChunks Read file by chunks.

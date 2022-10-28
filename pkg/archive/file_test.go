@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
 
 const testStoreDir = "test_store"
@@ -49,9 +50,9 @@ func TestGetInfo(t *testing.T) {
 	path := createTestFile(t, testDir, "test_file.txt", text)
 
 	f := NewFile(testDir)
-	info, err := f.GetInfo("test_file.txt")
+	modTime, err := f.GetModTime("test_file.txt")
 	assert.Nil(t, err)
-	assert.Equal(t, "test_file.txt", info.Name())
+	assert.IsType(t, time.Time{}, modTime)
 
 	removeTestFile(t, path)
 }

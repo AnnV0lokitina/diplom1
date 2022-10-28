@@ -5,8 +5,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
 
 const testSourceStoreDir = "test_source_store"
@@ -37,9 +39,11 @@ func TestGetZIPInfo(t *testing.T) {
 
 	sourceDir := createTestSourceDir(t)
 	arch := NewArchive(sourceDir, zipStorePath, zipName)
-	info, err := arch.GetZIPInfo()
+	modTime, err := arch.GetZIPModTime()
 	assert.Nil(t, err)
-	assert.Equal(t, zipName, info.Name())
+	stat, err := os.Stat(filepath.Join(arch.zipStorePath, arch.zipName))
+	assert.Nil(t, err)
+	assert.Equal(t, stat.ModTime(), modTime)
 
 	removeTestFile(t, path)
 }
@@ -78,8 +82,58 @@ func TestWriteZIPByChunks(t *testing.T) {
 	err = arch.ReadZIPByChunks(&w)
 	require.NoError(t, err)
 	assert.Equal(t, text, w.String())
+
+	path := filepath.Join(zipStorePath, zipName)
+	removeTestFile(t, path)
 }
 
-func TestZIPUnZIP(t *testing.T) {
+func TestPackUnpack(t *testing.T) {
+	text := "eokrapoerpoaewkorpweaokdaewok;sejfcsejfcapowejfpoaewjfpoJKEFPOJEWFOPjweofjowpejfpoejwfpowejfweojg" +
+		"awekjfoaiwejfiqwejfgoiqwj4efoiwjefgoqiwrejgfiqrwgjhoirwhgjiqrwhgirhgoirhgiqhrgiqwrjgijrgojqwgpojqwpg"
 
+	sourceDir := createTestSourceDir(t)
+	zipStorePath := createTestDir(t)
+	zipName := "test_zip.zip"
+	arch := NewArchive(sourceDir, zipStorePath, zipName)
+
+	createTestFile(t, sourceDir, "file1.txt", text)
+	createTestFile(t, sourceDir, "file2.txt", text)
+	createTestFile(t, sourceDir, "file3.txt", text)
+	createTestFile(t, sourceDir, "file4.txt", text)
+
+	err := arch.Pack()
+	assert.Nil(t, err)
+
+	modTime1, err := arch.GetZIPModTime()
+	assert.Nil(t, err)
+	stat1, err := os.Stat(filepath.Join(arch.zipStorePath, arch.zipName))
+	assert.Nil(t, err)
+
+	removeTestFile(t, filepath.Join(sourceDir, "file1.txt"))
+	removeTestFile(t, filepath.Join(sourceDir, "file2.txt"))
+	removeTestFile(t, filepath.Join(sourceDir, "file3.txt"))
+	removeTestFile(t, filepath.Join(sourceDir, "file4.txt"))
+
+	err = arch.Unpack()
+	assert.Nil(t, err)
+
+	removeTestFile(t, filepath.Join(zipStorePath, zipName))
+
+	time.Sleep(time.Second * 1)
+
+	err = arch.Pack()
+	assert.Nil(t, err)
+
+	modTime2, err := arch.GetZIPModTime()
+	assert.Nil(t, err)
+	stat2, err := os.Stat(filepath.Join(arch.zipStorePath, arch.zipName))
+	assert.Nil(t, err)
+
+	assert.Equal(t, true, modTime1.Before(modTime2))
+	assert.Equal(t, stat1.Size(), stat2.Size())
+
+	removeTestFile(t, filepath.Join(sourceDir, "file1.txt"))
+	removeTestFile(t, filepath.Join(sourceDir, "file2.txt"))
+	removeTestFile(t, filepath.Join(sourceDir, "file3.txt"))
+	removeTestFile(t, filepath.Join(sourceDir, "file4.txt"))
 }
