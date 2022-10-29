@@ -103,7 +103,7 @@ func (s *Service) RestoreFile(
 		log.Infof("no file to restore: %s", err)
 		return err
 	}
-	if info.UpdateTime.After(time) {
+	if info.UpdateTime.Before(time) {
 		log.Info("stored file is old")
 		return labelError.NewLabelError(labelError.TypeUpgradeRequired, errors.New("stored file is old"))
 	}

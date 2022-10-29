@@ -177,11 +177,11 @@ func TestRestoreFile(t *testing.T) {
 		}
 		if user == "old_file" {
 			return &entity.FileInfo{
-				UpdateTime: now,
+				UpdateTime: twoDaysAgo,
 			}, nil
 		}
 		return &entity.FileInfo{
-			UpdateTime: twoDaysAgo,
+			UpdateTime: now,
 		}, nil
 	}).AnyTimes()
 
@@ -210,11 +210,11 @@ func TestStoreFile(t *testing.T) {
 
 	ctx := context.Background()
 	errUnauth := labelError.NewLabelError(labelError.TypeUnauthorized, errors.New("user unauthorized"))
-	errUpgrade := labelError.NewLabelError(labelError.TypeUpgradeRequired, errors.New("stored file is old"))
+	errUpgrade := labelError.NewLabelError(labelError.TypeUpgradeRequired, errors.New("received file is old"))
 	now := time.Now()
 	yesterday := now.Add(time.Hour * -24)
 	twoDaysAgo := now.Add(time.Hour * -48)
-	w := &bytes.Buffer{}
+	r := &bytes.Buffer{}
 
 	db := mock.NewMockDB(ctrl)
 	repo := mock.NewMockRepo(ctrl)
@@ -238,8 +238,8 @@ func TestStoreFile(t *testing.T) {
 	repo.EXPECT().GetInfo(
 		gomock.Any(),
 	).DoAndReturn(func(user string) (*entity.FileInfo, error) {
-		if user == "get_info_error" {
-			return nil, errors.New("get_info_error")
+		if user == "store_no_check" || user == "store_no_check_err" {
+			return nil, errors.New("store_no_check")
 		}
 		if user == "old_file" {
 			return &entity.FileInfo{
@@ -251,21 +251,29 @@ func TestStoreFile(t *testing.T) {
 		}, nil
 	}).AnyTimes()
 
-	repo.EXPECT().Read(gomock.Any(), gomock.Any()).DoAndReturn(func(user string, _ io.Writer) error {
+	repo.EXPECT().Write(gomock.Any(), gomock.Any()).DoAndReturn(func(user string, _ io.Writer) error {
+		if user == "store_no_check_err" {
+			return errors.New("store_no_check_err")
+		}
+		if user == "store_no_check" {
+			return nil
+		}
 		if user == "write_error" {
 			return errors.New("write_error")
 		}
 		return nil
 	}).AnyTimes()
 
-	err := service.RestoreFile(ctx, "unauthorized", yesterday, w)
+	err := service.StoreFile(ctx, "unauthorized", yesterday, r)
 	assert.Equal(t, errUnauth, err)
-	err = service.RestoreFile(ctx, "get_info_error", yesterday, w)
+	err = service.StoreFile(ctx, "store_no_check_err", yesterday, r)
 	assert.Error(t, err)
-	err = service.RestoreFile(ctx, "old_file", yesterday, w)
+	err = service.StoreFile(ctx, "store_no_check", yesterday, r)
+	assert.Nil(t, err)
+	err = service.StoreFile(ctx, "old_file", yesterday, r)
 	assert.Equal(t, errUpgrade, err)
-	err = service.RestoreFile(ctx, "write_error", yesterday, w)
+	err = service.StoreFile(ctx, "write_error", yesterday, r)
 	assert.Error(t, err)
-	err = service.RestoreFile(ctx, "session", yesterday, w)
+	err = service.StoreFile(ctx, "session", yesterday, r)
 	assert.Nil(t, err)
 }
