@@ -10,11 +10,7 @@ import (
 )
 
 func (s *Service) ShowCredentialsList(ctx context.Context) []entity.Credentials {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -22,11 +18,7 @@ func (s *Service) ShowCredentialsList(ctx context.Context) []entity.Credentials 
 }
 
 func (s *Service) ShowTextFilesList(ctx context.Context) []entity.File {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -34,11 +26,7 @@ func (s *Service) ShowTextFilesList(ctx context.Context) []entity.File {
 }
 
 func (s *Service) ShowBinaryDataList(ctx context.Context) []entity.File {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -46,11 +34,7 @@ func (s *Service) ShowBinaryDataList(ctx context.Context) []entity.File {
 }
 
 func (s *Service) ShowBankCardList(ctx context.Context) []entity.BankCard {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -58,11 +42,7 @@ func (s *Service) ShowBankCardList(ctx context.Context) []entity.BankCard {
 }
 
 func (s *Service) GetCredentialsByLogin(ctx context.Context, login string) *entity.Credentials {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -70,11 +50,7 @@ func (s *Service) GetCredentialsByLogin(ctx context.Context, login string) *enti
 }
 
 func (s *Service) GetBankCardByNumber(ctx context.Context, number string) *entity.BankCard {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -86,11 +62,7 @@ func (s *Service) UploadTextFileByNameIntoPath(
 	name string,
 	outFilePath string,
 ) (*entity.File, error) {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -115,11 +87,7 @@ func (s *Service) UploadBinaryFileByNameIntoPath(
 	name string,
 	outFilePath string,
 ) (*entity.File, error) {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}

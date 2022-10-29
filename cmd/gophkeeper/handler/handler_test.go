@@ -1,20 +1,12 @@
 package handler
 
 import (
-	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
-	"github.com/stretchr/testify/assert"
+	"github.com/golang/mock/gomock"
 	"testing"
 )
 
-func TestNewHandler(t *testing.T) {
-	p := entity.Params{
-		ServerAddress: "localhost:3200",
-		FileStorePath: "",
-		ArchiveName:   "user_archive.zip",
-		DataFileName:  "data.json",
-	}
+func TestAddCredentials(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-	h, err := NewHandler(p)
-	assert.Nil(t, err)
-	assert.Equal(t, p, h.params)
 }

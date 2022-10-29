@@ -11,11 +11,7 @@ import (
 
 // AddCredentials Saves a pair of login and password.
 func (s *Service) AddCredentials(ctx context.Context, login string, password string, meta string) error {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -28,16 +24,12 @@ func (s *Service) AddCredentials(ctx context.Context, login string, password str
 	if err != nil {
 		return err
 	}
-	return s.sendInfo(ctx, session)
+	return s.r.SendInfo(ctx)
 }
 
 // AddTextFromFile Saves a text from file to storage.
 func (s *Service) AddTextFromFile(ctx context.Context, path string, meta string) error {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -61,16 +53,12 @@ func (s *Service) AddTextFromFile(ctx context.Context, path string, meta string)
 	if err != nil {
 		return err
 	}
-	return s.sendInfo(ctx, session)
+	return s.r.SendInfo(ctx)
 }
 
 // AddBinaryDataFromFile Saves a binary file to storage.
 func (s *Service) AddBinaryDataFromFile(ctx context.Context, path string, meta string) error {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -94,7 +82,7 @@ func (s *Service) AddBinaryDataFromFile(ctx context.Context, path string, meta s
 	if err != nil {
 		return err
 	}
-	return s.sendInfo(ctx, session)
+	return s.r.SendInfo(ctx)
 }
 
 // AddBankCard Saves a bank card to storage.
@@ -106,11 +94,7 @@ func (s *Service) AddBankCard(
 	code string,
 	meta string,
 ) error {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -125,5 +109,5 @@ func (s *Service) AddBankCard(
 	if err != nil {
 		return err
 	}
-	return s.sendInfo(ctx, session)
+	return s.r.SendInfo(ctx)
 }

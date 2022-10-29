@@ -113,7 +113,7 @@ func (ec *ExtConnection) StoreInfo(ctx context.Context, session string, reader i
 	return nil
 }
 
-func (ec *ExtConnection) RestoreInfo(ctx context.Context, session string, w io.Writer, fileInfo *entity.FileInfo) error {
+func (ec *ExtConnection) RestoreInfo(ctx context.Context, session string, w io.Writer, info *entity.FileInfo) error {
 	conn, err := ec.createConnection()
 	if err != nil {
 		log.Errorf("error create grpc connection: %s", err)
@@ -123,6 +123,9 @@ func (ec *ExtConnection) RestoreInfo(ctx context.Context, session string, w io.W
 	c := pb.NewSecureStorageClient(conn)
 	req := &pb.RestoreFileRequest{
 		Session: session,
+		Info: &pb.FileInfo{
+			Time: timestamppb.New(info.UpdateTime),
+		},
 	}
 	stream, err := c.RestoreFile(ctx, req)
 	if err != nil {
