@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"errors"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	"io"
 )
@@ -24,7 +23,7 @@ func (r *Repo) GetTextFileByName(name string) (*entity.File, io.Reader, error) {
 		}
 	}
 	if file == nil {
-		return nil, nil, errors.New("not found")
+		return nil, nil, errorNotFound
 	}
 	reader, err := r.enclosure.Open(file.Name)
 	if err != nil {
@@ -51,7 +50,7 @@ func (r *Repo) GetBinaryFileByName(name string) (*entity.File, io.Reader, error)
 		}
 	}
 	if file == nil {
-		return nil, nil, errors.New("not found")
+		return nil, nil, errorNotFound
 	}
 	reader, err := r.enclosure.Open(file.Name)
 	if err != nil {

@@ -1,12 +1,9 @@
 package repo
 
 import (
-	"errors"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	"io"
 )
-
-var errorDuplicate = errors.New("duplicate")
 
 // AddTextFile Save text file information to storage.
 func (r *Repo) AddTextFile(file entity.File, reader io.Reader) error {

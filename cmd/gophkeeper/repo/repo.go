@@ -1,8 +1,14 @@
 package repo
 
 import (
+	"errors"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	"sync"
+)
+
+var (
+	errorDuplicate = errors.New("duplicate")
+	errorNotFound  = errors.New("not found")
 )
 
 // Repo store in - memory storage and file - writer.
