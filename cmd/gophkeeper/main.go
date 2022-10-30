@@ -170,8 +170,13 @@ func main() {
 								Value:   "",
 							},
 							&cli.StringFlag{
-								Name:     "path",
-								Aliases:  []string{"p"},
+								Name:     "text",
+								Aliases:  []string{"t"},
+								Required: true,
+							},
+							&cli.StringFlag{
+								Name:     "name",
+								Aliases:  []string{"n"},
 								Required: true,
 							},
 						},
@@ -182,7 +187,8 @@ func main() {
 							}
 							err = h.AddTextFromFile(
 								cCtx.Context,
-								cCtx.String("path"),
+								cCtx.String("text"),
+								cCtx.String("name"),
 								cCtx.String("meta"),
 							)
 							return err
@@ -437,11 +443,6 @@ func main() {
 								Aliases:  []string{"n"},
 								Required: true,
 							},
-							&cli.StringFlag{
-								Name:     "path",
-								Aliases:  []string{"p"},
-								Required: true,
-							},
 						},
 						Action: func(cCtx *cli.Context) error {
 							h, err := handler.NewHandler(p)
@@ -451,7 +452,6 @@ func main() {
 							return h.GetTextFileByName(
 								cCtx.Context,
 								cCtx.String("name"),
-								cCtx.String("path"),
 							)
 						},
 					},

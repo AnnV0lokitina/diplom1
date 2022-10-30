@@ -1,20 +1,15 @@
 package service
 
 import (
+	"bytes"
 	"context"
-	"fmt"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	log "github.com/sirupsen/logrus"
 	"io"
-	"os"
 )
 
 func (s *Service) ShowCredentialsList(ctx context.Context) []entity.Credentials {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -22,11 +17,7 @@ func (s *Service) ShowCredentialsList(ctx context.Context) []entity.Credentials 
 }
 
 func (s *Service) ShowTextFilesList(ctx context.Context) []entity.File {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -34,11 +25,7 @@ func (s *Service) ShowTextFilesList(ctx context.Context) []entity.File {
 }
 
 func (s *Service) ShowBinaryDataList(ctx context.Context) []entity.File {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -46,11 +33,7 @@ func (s *Service) ShowBinaryDataList(ctx context.Context) []entity.File {
 }
 
 func (s *Service) ShowBankCardList(ctx context.Context) []entity.BankCard {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -58,11 +41,7 @@ func (s *Service) ShowBankCardList(ctx context.Context) []entity.BankCard {
 }
 
 func (s *Service) GetCredentialsByLogin(ctx context.Context, login string) *entity.Credentials {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -70,44 +49,29 @@ func (s *Service) GetCredentialsByLogin(ctx context.Context, login string) *enti
 }
 
 func (s *Service) GetBankCardByNumber(ctx context.Context, number string) *entity.BankCard {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
 	return s.repo.GetBankCardByNumber(number)
 }
 
-func (s *Service) UploadTextFileByNameIntoPath(
-	ctx context.Context,
-	name string,
-	outFilePath string,
-) (*entity.File, error) {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+func (s *Service) GetTextByName(ctx context.Context, name string) (*entity.File, string, error) {
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
 	f, reader, err := s.repo.GetTextFileByName(name)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
-	fo, err := os.Create(outFilePath)
+	defer reader.Close()
+	textBuf := bytes.Buffer{}
+	_, err = io.Copy(&textBuf, reader)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
-	_, err = io.Copy(fo, reader)
-	if err != nil {
-		return nil, err
-	}
-	fmt.Println(f.Name)
-	return f, nil
+	return f, textBuf.String(), nil
 }
 
 func (s *Service) UploadBinaryFileByNameIntoPath(
@@ -115,11 +79,7 @@ func (s *Service) UploadBinaryFileByNameIntoPath(
 	name string,
 	outFilePath string,
 ) (*entity.File, error) {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -127,14 +87,9 @@ func (s *Service) UploadBinaryFileByNameIntoPath(
 	if err != nil {
 		return nil, err
 	}
-	fo, err := os.Create(outFilePath)
+	err = s.ext.Save(outFilePath, reader)
 	if err != nil {
 		return nil, err
 	}
-	_, err = io.Copy(fo, reader)
-	if err != nil {
-		return nil, err
-	}
-	fmt.Println(f.Name)
 	return f, nil
 }

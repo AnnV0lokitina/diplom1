@@ -1,4 +1,4 @@
-package main
+package migrations
 
 import (
 	"database/sql"
@@ -7,12 +7,12 @@ import (
 	"github.com/pressly/goose/v3"
 )
 
-//go:embed migrations/*.sql
+//go:embed postgres/*.sql
 var embedMigrations embed.FS
 
 const dbType = "postgres"
 
-func doMigrates(dsn string) error {
+func DoMigrates(dsn string) error {
 	db, err := sql.Open(dbType, dsn)
 	if err != nil {
 		return err
@@ -24,7 +24,7 @@ func doMigrates(dsn string) error {
 		return err
 	}
 
-	if err := goose.Up(db, "migrations"); err != nil {
+	if err := goose.Up(db, dbType); err != nil {
 		return err
 	}
 	return nil

@@ -57,7 +57,8 @@ func NewHandler(p entity.Params) (*Handler, error) {
 	c := external.NewExtConnection(p.ServerAddress, p.FileStorePath)
 	log.Info("create external storage manager")
 	sessStorage := filestorage.NewSession(p.Session)
-	s := service.NewService(r, c, sessStorage)
+	ext := filestorage.NewExternalFile()
+	s := service.NewService(r, c, sessStorage, ext)
 	log.Info("create service")
 	return &Handler{
 		params:  p,

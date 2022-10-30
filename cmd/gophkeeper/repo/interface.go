@@ -3,7 +3,7 @@ package repo
 import (
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	"io"
-	"os"
+	"time"
 )
 
 type FileStorageReader interface {
@@ -18,8 +18,8 @@ type FileStorageWriter interface {
 }
 
 type FileStorageEnclosure interface {
-	Save(fileName string, reader io.Reader) error
-	Open(fileName string) (io.Reader, error)
+	Save(fileName string, reader io.ReadCloser) error
+	Open(fileName string) (io.ReadCloser, error)
 	Remove(fileName string) error
 }
 
@@ -28,5 +28,5 @@ type Archive interface {
 	WriteZIPByChunks(r io.Reader) error
 	Pack() error
 	Unpack() error
-	GetZIPInfo() (os.FileInfo, error)
+	GetZIPModTime() (time.Time, error)
 }

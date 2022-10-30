@@ -6,11 +6,7 @@ import (
 )
 
 func (s *Service) RemoveCredentialsByLogin(ctx context.Context, login string) error {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -18,15 +14,11 @@ func (s *Service) RemoveCredentialsByLogin(ctx context.Context, login string) er
 	if err != nil {
 		return err
 	}
-	return s.sendInfo(ctx, session)
+	return s.r.SendInfo(ctx)
 }
 
 func (s *Service) RemoveTextByName(ctx context.Context, name string) error {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -34,15 +26,11 @@ func (s *Service) RemoveTextByName(ctx context.Context, name string) error {
 	if err != nil {
 		return err
 	}
-	return s.sendInfo(ctx, session)
+	return s.r.SendInfo(ctx)
 }
 
 func (s *Service) RemoveBinaryDataByName(ctx context.Context, name string) error {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -50,15 +38,11 @@ func (s *Service) RemoveBinaryDataByName(ctx context.Context, name string) error
 	if err != nil {
 		return err
 	}
-	return s.sendInfo(ctx, session)
+	return s.r.SendInfo(ctx)
 }
 
 func (s *Service) RemoveBankCardByNumber(ctx context.Context, number string) error {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -66,5 +50,5 @@ func (s *Service) RemoveBankCardByNumber(ctx context.Context, number string) err
 	if err != nil {
 		return err
 	}
-	return s.sendInfo(ctx, session)
+	return s.r.SendInfo(ctx)
 }

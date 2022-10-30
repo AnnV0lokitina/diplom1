@@ -16,8 +16,8 @@ func (h *Handler) AddCredentials(ctx context.Context, login string, password str
 }
 
 // AddTextFromFile Handles a request to add text from a file.
-func (h *Handler) AddTextFromFile(ctx context.Context, path string, meta string) error {
-	err := h.service.AddTextFromFile(ctx, path, meta)
+func (h *Handler) AddTextFromFile(ctx context.Context, text string, name string, meta string) error {
+	err := h.service.AddText(ctx, text, name, meta)
 	if err != nil {
 		return err
 	}

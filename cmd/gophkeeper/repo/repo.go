@@ -1,8 +1,14 @@
 package repo
 
 import (
+	"errors"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	"sync"
+)
+
+var (
+	errorDuplicate = errors.New("duplicate")
+	errorNotFound  = errors.New("not found")
 )
 
 // Repo store in - memory storage and file - writer.
@@ -27,7 +33,9 @@ func NewFileRepo(
 		err    error
 	)
 	if !reader.Empty() {
-		defer reader.Close()
+		defer func() {
+			err = reader.Close()
+		}()
 		record, err = reader.ReadRecord()
 		if err != nil {
 			return nil, err
@@ -41,7 +49,7 @@ func NewFileRepo(
 		enclosure: enclosure,
 		archive:   archive,
 		reader:    reader,
-	}, nil
+	}, err
 }
 
 // Close Closes file writer if information stored in file.

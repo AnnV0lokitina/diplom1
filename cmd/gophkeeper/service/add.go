@@ -1,21 +1,14 @@
 package service
 
 import (
-	"bufio"
 	"context"
-	"errors"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	log "github.com/sirupsen/logrus"
-	"os"
 )
 
 // AddCredentials Saves a pair of login and password.
 func (s *Service) AddCredentials(ctx context.Context, login string, password string, meta string) error {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -28,73 +21,46 @@ func (s *Service) AddCredentials(ctx context.Context, login string, password str
 	if err != nil {
 		return err
 	}
-	return s.sendInfo(ctx, session)
+	return s.r.SendInfo(ctx)
 }
 
-// AddTextFromFile Saves a text from file to storage.
-func (s *Service) AddTextFromFile(ctx context.Context, path string, meta string) error {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+// AddText Saves a text to storage.
+func (s *Service) AddText(ctx context.Context, text string, name string, meta string) error {
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
-	stat, err := os.Stat(path)
-	if os.IsNotExist(err) || stat.Size() == 0 {
-		return errors.New("no source file")
-	}
-	file, err := os.OpenFile(path, os.O_RDONLY, 0777)
-	if err != nil {
-		return err
-	}
-	reader := bufio.NewReader(file)
-	if err != nil {
-		return err
-	}
+	reader := entity.NewTextReadCloser(text)
 	info := entity.File{
-		Name: stat.Name(),
+		Name: name,
 		Meta: meta,
 	}
 	err = s.repo.AddTextFile(info, reader)
 	if err != nil {
 		return err
 	}
-	return s.sendInfo(ctx, session)
+	return s.r.SendInfo(ctx)
 }
 
 // AddBinaryDataFromFile Saves a binary file to storage.
 func (s *Service) AddBinaryDataFromFile(ctx context.Context, path string, meta string) error {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
-	stat, err := os.Stat(path)
-	if os.IsNotExist(err) || stat.Size() == 0 {
-		return errors.New("no source file")
-	}
-	file, err := os.OpenFile(path, os.O_RDONLY, 0777)
-	if err != nil {
-		return err
-	}
-	reader := bufio.NewReader(file)
+	name, reader, err := s.ext.Open(path)
 	if err != nil {
 		return err
 	}
 	info := entity.File{
-		Name: stat.Name(),
+		Name: name,
 		Meta: meta,
 	}
 	err = s.repo.AddBinaryFile(info, reader)
 	if err != nil {
 		return err
 	}
-	return s.sendInfo(ctx, session)
+	return s.r.SendInfo(ctx)
 }
 
 // AddBankCard Saves a bank card to storage.
@@ -106,11 +72,7 @@ func (s *Service) AddBankCard(
 	code string,
 	meta string,
 ) error {
-	session, err := s.session.Get()
-	if err != nil {
-		session = ""
-	}
-	err = s.receiveInfo(ctx, session)
+	err := s.r.ReceiveInfo(ctx)
 	if err != nil {
 		log.Info("receive info: " + err.Error())
 	}
@@ -125,5 +87,5 @@ func (s *Service) AddBankCard(
 	if err != nil {
 		return err
 	}
-	return s.sendInfo(ctx, session)
+	return s.r.SendInfo(ctx)
 }

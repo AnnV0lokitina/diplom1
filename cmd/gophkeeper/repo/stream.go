@@ -22,14 +22,14 @@ func (r *Repo) GetInfo() (*entity.FileInfo, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	info, err := r.archive.GetZIPInfo()
+	updTime, err := r.archive.GetZIPModTime()
 	if err != nil {
 		return &entity.FileInfo{
 			UpdateTime: time.Time{},
 		}, err
 	}
 	return &entity.FileInfo{
-		UpdateTime: info.ModTime(),
+		UpdateTime: updTime,
 	}, nil
 }
 
