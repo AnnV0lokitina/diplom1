@@ -49,6 +49,9 @@ func (s *Service) AddBinaryDataFromFile(ctx context.Context, path string, meta s
 		log.Info("receive info: " + err.Error())
 	}
 	name, reader, err := s.ext.Open(path)
+	if err != nil {
+		return err
+	}
 	info := entity.File{
 		Name: name,
 		Meta: meta,
