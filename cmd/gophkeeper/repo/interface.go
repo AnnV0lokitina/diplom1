@@ -18,8 +18,8 @@ type FileStorageWriter interface {
 }
 
 type FileStorageEnclosure interface {
-	Save(fileName string, reader io.Reader) error
-	Open(fileName string) (io.Reader, error)
+	Save(fileName string, reader io.ReadCloser) error
+	Open(fileName string) (io.ReadCloser, error)
 	Remove(fileName string) error
 }
 

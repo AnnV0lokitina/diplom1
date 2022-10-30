@@ -80,13 +80,14 @@ func (h *Handler) GetBankCardByNumber(ctx context.Context, number string) {
 	h.printBankCard(*c)
 }
 
-func (h *Handler) GetTextFileByName(ctx context.Context, name string, path string) error {
-	f, err := h.service.UploadTextFileByNameIntoPath(ctx, name, path)
+func (h *Handler) GetTextFileByName(ctx context.Context, name string) error {
+	f, text, err := h.service.GetTextByName(ctx, name)
 	if err != nil {
-		fmt.Println("Error while uploading text file")
+		fmt.Println("Error while uploading text")
 		return err
 	}
-	fmt.Println(fmt.Sprintf("Successfully upload text file %s", f.Name))
+	fmt.Println(fmt.Sprintf("Successfully upload text %s", f.Name))
+	fmt.Println(fmt.Sprintf("Text: %s", text))
 	return nil
 }
 

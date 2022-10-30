@@ -6,14 +6,6 @@ import (
 	"io"
 )
 
-type RepoZip interface {
-	CreateZIP() error
-	UnpackZIP() error
-	GetInfo() (*entity.FileInfo, error)
-	ReadFileByChunks(w io.Writer) error
-	WriteFileByChunks(reader io.Reader) error
-}
-
 type ExtConnection interface {
 	Register(ctx context.Context, login string, password string) (string, error)
 	Login(ctx context.Context, login string, password string) (string, error)

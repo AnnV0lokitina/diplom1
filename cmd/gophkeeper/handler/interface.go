@@ -8,7 +8,7 @@ import (
 // ServiceAdd declare add interface
 type ServiceAdd interface {
 	AddCredentials(ctx context.Context, login string, password string, meta string) error
-	AddTextFromFile(ctx context.Context, path string, meta string) error
+	AddText(ctx context.Context, text string, name string, meta string) error
 	AddBinaryDataFromFile(ctx context.Context, path string, meta string) error
 	AddBankCard(
 		ctx context.Context,
@@ -42,7 +42,7 @@ type ServiceShow interface {
 	ShowBankCardList(ctx context.Context) []entity.BankCard
 	GetCredentialsByLogin(ctx context.Context, login string) *entity.Credentials
 	GetBankCardByNumber(ctx context.Context, number string) *entity.BankCard
-	UploadTextFileByNameIntoPath(ctx context.Context, name string, outFilePath string) (*entity.File, error)
+	GetTextByName(ctx context.Context, name string) (*entity.File, string, error)
 	UploadBinaryFileByNameIntoPath(ctx context.Context, name string, outFilePath string) (*entity.File, error)
 }
 

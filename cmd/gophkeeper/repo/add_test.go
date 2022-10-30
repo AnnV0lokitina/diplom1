@@ -1,14 +1,12 @@
 package repo
 
 import (
-	"bytes"
 	"errors"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/repo/mock"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"io"
-	"strings"
 	"testing"
 )
 
@@ -94,7 +92,7 @@ func TestAdd(t *testing.T) {
 		Meta: "meta",
 	}
 	text := "texttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttext"
-	textReader := strings.NewReader(text)
+	textReader := entity.NewTextReadCloser(text)
 	err = repo.AddTextFile(textFile, textReader)
 	assert.Error(t, err)
 	err = repo.AddTextFile(textFile, textReader)
@@ -124,7 +122,8 @@ func TestAdd(t *testing.T) {
 		Name: "bin_file.exe",
 		Meta: "meta",
 	}
-	binReader := bytes.NewReader([]byte(text))
+	//binReader := bytes.NewReader([]byte(text))
+	binReader := entity.NewTextReadCloser(text)
 	err = repo.AddBinaryFile(binFile, binReader)
 	assert.Error(t, err)
 	err = repo.AddBinaryFile(binFile, binReader)

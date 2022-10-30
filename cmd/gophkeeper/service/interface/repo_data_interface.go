@@ -6,14 +6,14 @@ import (
 )
 
 type RepoData interface {
-	AddTextFile(file entity.File, reader io.Reader) error
-	AddBinaryFile(file entity.File, reader io.Reader) error
+	AddTextFile(file entity.File, reader io.ReadCloser) error
+	AddBinaryFile(file entity.File, reader io.ReadCloser) error
 	AddCredentials(cred entity.Credentials) error
 	AddBankCard(card entity.BankCard) error
 	GetTextFileList() []entity.File
-	GetTextFileByName(name string) (*entity.File, io.Reader, error)
+	GetTextFileByName(name string) (*entity.File, io.ReadCloser, error)
 	GetBinaryFileList() []entity.File
-	GetBinaryFileByName(name string) (*entity.File, io.Reader, error)
+	GetBinaryFileByName(name string) (*entity.File, io.ReadCloser, error)
 	GetCredentialsList() []entity.Credentials
 	GetCredentialsByLogin(login string) *entity.Credentials
 	GetBankCardList() []entity.BankCard
@@ -22,9 +22,4 @@ type RepoData interface {
 	RemoveBinaryFileByName(name string) error
 	RemoveCredentialsByLogin(login string) error
 	RemoveBankCardByNumber(number string) error
-	CreateZIP() error
-	UnpackZIP() error
-	GetInfo() (*entity.FileInfo, error)
-	ReadFileByChunks(w io.Writer) error
-	WriteFileByChunks(reader io.Reader) error
 }

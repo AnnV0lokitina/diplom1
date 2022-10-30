@@ -6,7 +6,7 @@ import (
 )
 
 // AddTextFile Save text file information to storage.
-func (r *Repo) AddTextFile(file entity.File, reader io.Reader) error {
+func (r *Repo) AddTextFile(file entity.File, reader io.ReadCloser) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	oldFileList := make([]entity.File, 0, len(r.record.TextFileList))
@@ -31,7 +31,7 @@ func (r *Repo) AddTextFile(file entity.File, reader io.Reader) error {
 }
 
 // AddBinaryFile Save binary file information to storage.
-func (r *Repo) AddBinaryFile(file entity.File, reader io.Reader) error {
+func (r *Repo) AddBinaryFile(file entity.File, reader io.ReadCloser) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	oldFileList := make([]entity.File, 0, len(r.record.BinaryFileList))

@@ -154,10 +154,10 @@ func (m *MockFileStorageEnclosure) EXPECT() *MockFileStorageEnclosureMockRecorde
 }
 
 // Open mocks base method.
-func (m *MockFileStorageEnclosure) Open(fileName string) (io.Reader, error) {
+func (m *MockFileStorageEnclosure) Open(fileName string) (io.ReadCloser, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Open", fileName)
-	ret0, _ := ret[0].(io.Reader)
+	ret0, _ := ret[0].(io.ReadCloser)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -183,7 +183,7 @@ func (mr *MockFileStorageEnclosureMockRecorder) Remove(fileName interface{}) *go
 }
 
 // Save mocks base method.
-func (m *MockFileStorageEnclosure) Save(fileName string, reader io.Reader) error {
+func (m *MockFileStorageEnclosure) Save(fileName string, reader io.ReadCloser) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Save", fileName, reader)
 	ret0, _ := ret[0].(error)

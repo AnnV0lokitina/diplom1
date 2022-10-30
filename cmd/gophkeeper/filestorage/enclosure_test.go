@@ -2,11 +2,11 @@ package filestorage
 
 import (
 	"bytes"
+	"github.com/AnnV0lokitina/diplom1/cmd/gophkeeper/entity"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io"
 	"os"
-	"strings"
 	"testing"
 )
 
@@ -25,7 +25,7 @@ func TestSaveOpenRemove(t *testing.T) {
 	tmpDir := os.TempDir()
 	testDir, err := os.MkdirTemp(tmpDir, testStoreDir)
 	require.NoError(t, err)
-	reader := strings.NewReader(testFileContent)
+	reader := entity.NewTextReadCloser(testFileContent)
 
 	enIncorrect := NewEnclosure(testDir + "1")
 

@@ -13,7 +13,7 @@ func (r *Repo) GetTextFileList() []entity.File {
 }
 
 // GetTextFileByName Get text files information from storage by name.
-func (r *Repo) GetTextFileByName(name string) (*entity.File, io.Reader, error) {
+func (r *Repo) GetTextFileByName(name string) (*entity.File, io.ReadCloser, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	var file *entity.File
@@ -40,7 +40,7 @@ func (r *Repo) GetBinaryFileList() []entity.File {
 }
 
 // GetBinaryFileByName Get binary file from storage by name.
-func (r *Repo) GetBinaryFileByName(name string) (*entity.File, io.Reader, error) {
+func (r *Repo) GetBinaryFileByName(name string) (*entity.File, io.ReadCloser, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	var file *entity.File
